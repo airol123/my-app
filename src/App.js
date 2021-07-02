@@ -15,6 +15,7 @@ export default class App extends Component {
     //state
     this.state = {
       clickId:"",
+      clickLabel:"",
       nbClique:0,
       apiResponse: "",
       comboData: {
@@ -199,6 +200,348 @@ export default class App extends Component {
           {
             id: 'item3',
             label: 'item3',
+          },
+        ]
+      },
+      viewData: {
+        nodes: [
+          {
+            id: 'i01',
+            x: 200,
+            y: 110,
+            comboId: 'item',
+          },
+          {
+            id: 'u01',
+            x: 100,
+            y: 110,
+            comboId: 'user',
+          },
+          {
+            id: 'i02',
+            x: 200,
+            y: 100,
+            comboId: 'item',
+          },
+          {
+            id: 'u02',
+            x: 100,
+            y: 100,
+            comboId: 'user',
+          },
+          {
+            id: 'i03',
+            x: 200,
+            y: 120,
+            comboId: 'item',
+          },
+          {
+            id: 'u03',
+            x: 100,
+            y: 120,
+            comboId: 'user',
+          },
+        ],
+        edges: [{
+          source: 'i01',
+          target: 'u01',
+
+        },
+        {
+          source: 'i02',
+          target: 'u02',
+
+        },
+        {
+          source: 'i03',
+          target: 'u03',
+        },
+        {
+          source: 'i03',
+          target: 'u01',
+        }
+        ],
+        combos: [
+          {
+            id: 'item',
+            label: 'item',
+          },
+          {
+            id: 'user',
+            label: 'user',
+          },
+        ]
+      },
+      addtocartData: {
+        nodes: [
+          {
+            id: 'i01',
+            x: 200,
+            y: 110,
+            comboId: 'item',
+          },
+          {
+            id: 'u01',
+            x: 100,
+            y: 110,
+            comboId: 'user',
+          },
+          {
+            id: 'i02',
+            x: 200,
+            y: 100,
+            comboId: 'item',
+          },
+          {
+            id: 'u02',
+            x: 100,
+            y: 100,
+            comboId: 'user',
+          },
+          {
+            id: 'i03',
+            x: 200,
+            y: 120,
+            comboId: 'item',
+          },
+          {
+            id: 'u03',
+            x: 100,
+            y: 120,
+            comboId: 'user',
+          },
+        ],
+        edges: [{
+          source: 'i01',
+          target: 'u01',
+
+        },
+        {
+          source: 'i02',
+          target: 'u02',
+
+        },
+        {
+          source: 'i03',
+          target: 'u03',
+        },
+        {
+          source: 'i03',
+          target: 'u01',
+        }
+        ],
+        combos: [
+          {
+            id: 'item',
+            label: 'item',
+          },
+          {
+            id: 'user',
+            label: 'user',
+          },
+        ]
+      },
+      transactionData: {
+        nodes: [
+          {
+            id: 'i01',
+            x: 200,
+            y: 110,
+            comboId: 'item',
+          },
+          {
+            id: 'u01',
+            x: 100,
+            y: 110,
+            comboId: 'user',
+          },
+          {
+            id: 'i02',
+            x: 200,
+            y: 100,
+            comboId: 'item',
+          },
+          {
+            id: 'u02',
+            x: 100,
+            y: 100,
+            comboId: 'user',
+          },
+          {
+            id: 'i03',
+            x: 200,
+            y: 120,
+            comboId: 'item',
+          },
+          {
+            id: 'u03',
+            x: 100,
+            y: 120,
+            comboId: 'user',
+          },
+        ],
+        edges: [{
+          source: 'i01',
+          target: 'u01',
+
+        },
+        {
+          source: 'i02',
+          target: 'u02',
+
+        },
+        {
+          source: 'i03',
+          target: 'u03',
+        },
+        {
+          source: 'i03',
+          target: 'u01',
+        }
+        ],
+        combos: [
+          {
+            id: 'item',
+            label: 'item',
+          },
+          {
+            id: 'user',
+            label: 'user',
+          },
+        ]
+      },
+      belongtoData: {
+        nodes: [
+          {
+            id: 'i01',
+            x: 200,
+            y: 110,
+            comboId: 'item',
+          },
+          {
+            id: 'c01',
+            x: 100,
+            y: 110,
+            comboId: 'category',
+          },
+          {
+            id: 'i02',
+            x: 200,
+            y: 100,
+            comboId: 'item',
+          },
+          {
+            id: 'c02',
+            x: 100,
+            y: 100,
+            comboId: 'category',
+          },
+          {
+            id: 'i03',
+            x: 200,
+            y: 120,
+            comboId: 'item',
+          },
+          {
+            id: 'c03',
+            x: 100,
+            y: 120,
+            comboId: 'category',
+          },
+        ],
+        edges: [{
+          source: 'i01',
+          target: 'c01',
+
+        },
+        {
+          source: 'i02',
+          target: 'c02',
+
+        },
+        {
+          source: 'i03',
+          target: 'c03',
+        },
+        {
+          source: 'i03',
+          target: 'c01',
+        }
+        ],
+        combos: [
+          {
+            id: 'item',
+            label: 'item',
+          },
+          {
+            id: 'category',
+            label: 'category',
+          },
+        ]
+      },
+      subCategoryData: {
+        nodes: [
+          {
+            id: 'c01',
+            x: 200,
+            y: 110,
+            comboId: 'category',
+          },
+          {
+            id: 'c02',
+            x: 100,
+            y: 110,
+            comboId: 'category',
+          },
+          {
+            id: 'c03',
+            x: 200,
+            y: 100,
+            comboId: 'category',
+          },
+          {
+            id: 'c04',
+            x: 100,
+            y: 100,
+            comboId: 'category',
+          },
+          {
+            id: 'c05',
+            x: 200,
+            y: 120,
+            comboId: 'category',
+          },
+          {
+            id: 'c06',
+            x: 100,
+            y: 120,
+            comboId: 'category',
+          },
+        ],
+        edges: [{
+          source: 'c01',
+          target: 'c06',
+
+        },
+        {
+          source: 'c02',
+          target: 'c06',
+
+        },
+        {
+          source: 'c03',
+          target: 'c06',
+        },
+        {
+          source: 'c04',
+          target: 'c05',
+        }
+        ],
+        combos: [
+
+          {
+            id: 'category',
+            label: 'category',
           },
         ]
       },
@@ -420,6 +763,29 @@ export default class App extends Component {
       //console.log(item._cfg);
       //console.log(item._cfg.model.label)
 
+      var label = item._cfg.model.label;
+      //this.setState({nbClique:this.state.nbClique+1})
+      this.setState({clickLabel:label});
+      if (this.state.clickLabel == 'view') {
+        //view
+        this.comboGraph.changeData(this.state.viewData);
+      }
+      else if (this.state.clickLabel == 'addtocart') {
+        //addtocart
+        this.comboGraph.changeData(this.state.addtocartData);
+      }
+      else if (this.state.clickLabel == 'transaction') {
+        //transaction
+        this.comboGraph.changeData(this.state.transactionData);
+      }
+      else if (this.state.clickLabel == 'belongto') {
+        //belongto
+        this.comboGraph.changeData(this.state.belongtoData);
+      }
+      else if (this.state.clickLabel == 'subCategory') {
+        //subCategory
+        this.comboGraph.changeData(this.state.subCategoryData);
+      }
     })
 
     this.forceGraph.on('canvas:click', (evt) => {
@@ -436,13 +802,13 @@ export default class App extends Component {
 
      //combo graph
       const width = document.getElementById('combo').scrollWidth || 500;
-      const height = document.getElementById('combo').scrollHeight || 300;
+      const height = document.getElementById('combo').scrollHeight || 500;
       this.comboGraph = new G6.Graph({
         container: document.getElementById('combo'),
         width,
         height,
         plugins: [tooltipCombo],
-        fitView: true,
+       // fitView: true,
         // translate the comboGraph to align the canvas's center, support by v3.5.1
         fitCenter: true,
         // Set groupByTypes to false to get rendering result with reasonable visual zIndex for combos
@@ -458,7 +824,7 @@ export default class App extends Component {
             lineWidth: 1,
           },
           defaultNode: {
-            size: 20,
+            size: 50,
           },
           labelCfg: {
             position: 'top',
