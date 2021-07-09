@@ -30,7 +30,7 @@ export default function CenteredGrid() {
               </div>
               <div >
                 <div className="divcss2">
-                  <img src="https://s3.jpg.cm/2021/06/21/IRcYk5.png" width="30" height="30" border="0"></img>
+                  <img alt='legende' src="https://s3.jpg.cm/2021/06/21/IRcYk5.png" width="30" height="30" border="0"></img>
                   {/* <img src='https://s3.jpg.cm/2021/06/20/IRWQaW.png' width="50" height="50" border="0" ></img>*/}
                 </div>
                 <div className="divcss1 fontcss">Entities evolving over time and their fixed attributes</div>
@@ -64,10 +64,10 @@ export default function CenteredGrid() {
 
           </div>
         </Grid>
-        <Grid item xs={8}>
+        <Grid item xs={7}>
           <div id='force'></div>
         </Grid>
-        <Grid item xs={2}>
+        <Grid item xs={3}>
           <Tableau></Tableau>
         </Grid>
         <Grid item xs={12}>

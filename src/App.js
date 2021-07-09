@@ -5,9 +5,7 @@ import { Footer, Header, CenteredGrid } from './components/Layout'
 import axios from 'axios';
 
 import React,{ Component } from 'react'
-import ReactDOM from 'react-dom';
-
-
+import PubSub from 'pubsub-js'
 
 export default class App extends Component {
   constructor(props) {
@@ -16,535 +14,10 @@ export default class App extends Component {
     this.state = {
       clickId:"",
       clickLabel:"",
-      nbClique:0,
       apiResponse: "",
-      comboData: {
-        nodes: [
-          {
-            id: 'node1',
-            x: 200,
-            y: 110,
-            comboId: 'item',
-            date: parseInt('20200202')
-          },
-          {
-            id: 'node2',
-            x: 100,
-            y: 110,
-            comboId: 'user',
-          },
-          {
-            id: 'node3',
-            x: 200,
-            y: 100,
-            comboId: 'item',
-          },
-          {
-            id: 'node4',
-            x: 100,
-            y: 100,
-            comboId: 'user',
-          },
-          {
-            id: 'node5',
-            x: 200,
-            y: 120,
-            comboId: 'item',
-          },
-          {
-            id: 'node6',
-            x: 100,
-            y: 120,
-            comboId: 'user',
-          },
-        ],
-        edges: [{
-          source: 'node1',
-          target: 'node2',
-          type: 'line',
-        },
-        {
-          source: 'node3',
-          target: 'node4',
-          type: 'line',
-        },
-        {
-          source: 'node3',
-          target: 'node6',
-          type: 'line',
-        }
-        ],
-        combos: [
-          {
-            id: 'item',
-            label: 'item',
-          },
-          {
-            id: 'user',
-            label: 'user',
-          },
-        ]
-      },
-      userData: {
-        nodes: [
-          {
-            id: 'node1',
-            x: 200,
-            y: 110,
-            comboId: 'user1',
-
-          },
-          {
-            id: 'node2',
-            x: 100,
-            y: 110,
-            comboId: 'user2',
-          },
-          {
-            id: 'node3',
-            x: 200,
-            y: 100,
-            comboId: 'user3',
-          },
-        ],
-        combos: [
-          {
-            id: 'user1',
-            label: 'user1',
-          },
-          {
-            id: 'user2',
-            label: 'user2',
-          },
-          {
-            id: 'user3',
-            label: 'user3',
-          },
-        ]
-      },
-      categoryData: {
-        nodes: [
-          {
-            id: 'node1',
-            x: 200,
-            y: 110,
-            comboId: 'category1',
-
-          },
-          {
-            id: 'node2',
-            x: 100,
-            y: 110,
-            comboId: 'category2',
-          },
-          {
-            id: 'node3',
-            x: 200,
-            y: 100,
-            comboId: 'category3',
-          },
-        ],
-        combos: [
-          {
-            id: 'category1',
-            label: 'category1',
-          },
-          {
-            id: 'category2',
-            label: 'category2',
-          },
-          {
-            id: 'category3',
-            label: 'category3',
-          },
-        ]
-      },
-      itemData: {
-        nodes: [
-          {
-            id: 'node1',
-            x: 200,
-            y: 110,
-            comboId: 'item1',
-
-          },
-          {
-            id: 'node4',
-            x: 200,
-            y: 130,
-            comboId: 'item1',
-
-          },
-          {
-            id: 'node2',
-            x: 100,
-            y: 110,
-            comboId: 'item2',
-          },
-          {
-            id: 'node3',
-            x: 200,
-            y: 100,
-            comboId: 'item3',
-          },
-        ],
-        combos: [
-          {
-            id: 'item1',
-            label: 'item1',
-          },
-          {
-            id: 'item2',
-            label: 'item2',
-          },
-          {
-            id: 'item3',
-            label: 'item3',
-          },
-        ]
-      },
-      viewData: {
-        nodes: [
-          {
-            id: 'i01',
-            x: 200,
-            y: 110,
-            comboId: 'item',
-          },
-          {
-            id: 'u01',
-            x: 100,
-            y: 110,
-            comboId: 'user',
-          },
-          {
-            id: 'i02',
-            x: 200,
-            y: 100,
-            comboId: 'item',
-          },
-          {
-            id: 'u02',
-            x: 100,
-            y: 100,
-            comboId: 'user',
-          },
-          {
-            id: 'i03',
-            x: 200,
-            y: 120,
-            comboId: 'item',
-          },
-          {
-            id: 'u03',
-            x: 100,
-            y: 120,
-            comboId: 'user',
-          },
-        ],
-        edges: [{
-          source: 'i01',
-          target: 'u01',
-
-        },
-        {
-          source: 'i02',
-          target: 'u02',
-
-        },
-        {
-          source: 'i03',
-          target: 'u03',
-        },
-        {
-          source: 'i03',
-          target: 'u01',
-        }
-        ],
-        combos: [
-          {
-            id: 'item',
-            label: 'item',
-          },
-          {
-            id: 'user',
-            label: 'user',
-          },
-        ]
-      },
-      addtocartData: {
-        nodes: [
-          {
-            id: 'i01',
-            x: 200,
-            y: 110,
-            comboId: 'item',
-          },
-          {
-            id: 'u01',
-            x: 100,
-            y: 110,
-            comboId: 'user',
-          },
-          {
-            id: 'i02',
-            x: 200,
-            y: 100,
-            comboId: 'item',
-          },
-          {
-            id: 'u02',
-            x: 100,
-            y: 100,
-            comboId: 'user',
-          },
-          {
-            id: 'i03',
-            x: 200,
-            y: 120,
-            comboId: 'item',
-          },
-          {
-            id: 'u03',
-            x: 100,
-            y: 120,
-            comboId: 'user',
-          },
-        ],
-        edges: [{
-          source: 'i01',
-          target: 'u01',
-
-        },
-        {
-          source: 'i02',
-          target: 'u02',
-
-        },
-        {
-          source: 'i03',
-          target: 'u03',
-        },
-        {
-          source: 'i03',
-          target: 'u01',
-        }
-        ],
-        combos: [
-          {
-            id: 'item',
-            label: 'item',
-          },
-          {
-            id: 'user',
-            label: 'user',
-          },
-        ]
-      },
-      transactionData: {
-        nodes: [
-          {
-            id: 'i01',
-            x: 200,
-            y: 110,
-            comboId: 'item',
-          },
-          {
-            id: 'u01',
-            x: 100,
-            y: 110,
-            comboId: 'user',
-          },
-          {
-            id: 'i02',
-            x: 200,
-            y: 100,
-            comboId: 'item',
-          },
-          {
-            id: 'u02',
-            x: 100,
-            y: 100,
-            comboId: 'user',
-          },
-          {
-            id: 'i03',
-            x: 200,
-            y: 120,
-            comboId: 'item',
-          },
-          {
-            id: 'u03',
-            x: 100,
-            y: 120,
-            comboId: 'user',
-          },
-        ],
-        edges: [{
-          source: 'i01',
-          target: 'u01',
-
-        },
-        {
-          source: 'i02',
-          target: 'u02',
-
-        },
-        {
-          source: 'i03',
-          target: 'u03',
-        },
-        {
-          source: 'i03',
-          target: 'u01',
-        }
-        ],
-        combos: [
-          {
-            id: 'item',
-            label: 'item',
-          },
-          {
-            id: 'user',
-            label: 'user',
-          },
-        ]
-      },
-      belongtoData: {
-        nodes: [
-          {
-            id: 'i01',
-            x: 200,
-            y: 110,
-            comboId: 'item',
-          },
-          {
-            id: 'c01',
-            x: 100,
-            y: 110,
-            comboId: 'category',
-          },
-          {
-            id: 'i02',
-            x: 200,
-            y: 100,
-            comboId: 'item',
-          },
-          {
-            id: 'c02',
-            x: 100,
-            y: 100,
-            comboId: 'category',
-          },
-          {
-            id: 'i03',
-            x: 200,
-            y: 120,
-            comboId: 'item',
-          },
-          {
-            id: 'c03',
-            x: 100,
-            y: 120,
-            comboId: 'category',
-          },
-        ],
-        edges: [{
-          source: 'i01',
-          target: 'c01',
-
-        },
-        {
-          source: 'i02',
-          target: 'c02',
-
-        },
-        {
-          source: 'i03',
-          target: 'c03',
-        },
-        {
-          source: 'i03',
-          target: 'c01',
-        }
-        ],
-        combos: [
-          {
-            id: 'item',
-            label: 'item',
-          },
-          {
-            id: 'category',
-            label: 'category',
-          },
-        ]
-      },
-      subCategoryData: {
-        nodes: [
-          {
-            id: 'c01',
-            x: 200,
-            y: 110,
-            comboId: 'category',
-          },
-          {
-            id: 'c02',
-            x: 100,
-            y: 110,
-            comboId: 'category',
-          },
-          {
-            id: 'c03',
-            x: 200,
-            y: 100,
-            comboId: 'category',
-          },
-          {
-            id: 'c04',
-            x: 100,
-            y: 100,
-            comboId: 'category',
-          },
-          {
-            id: 'c05',
-            x: 200,
-            y: 120,
-            comboId: 'category',
-          },
-          {
-            id: 'c06',
-            x: 100,
-            y: 120,
-            comboId: 'category',
-          },
-        ],
-        edges: [{
-          source: 'c01',
-          target: 'c06',
-
-        },
-        {
-          source: 'c02',
-          target: 'c06',
-
-        },
-        {
-          source: 'c03',
-          target: 'c06',
-        },
-        {
-          source: 'c04',
-          target: 'c05',
-        }
-        ],
-        combos: [
-
-          {
-            id: 'category',
-            label: 'category',
-          },
-        ]
-      },
+      comboData: {},
+      nodeid:{},
+      edgeid:{},
       forceData: {
         nodes: [
           {
@@ -597,11 +70,23 @@ export default class App extends Component {
         ],
 
       }
-
     };
     this.comboGraph = null;
     this.forceGraph = null;
   }
+
+  //publish message
+  publishmsgNode=()=>{
+    console.log("message")
+
+    PubSub.publish('MY TOPIC',this.state.nodeid);
+  }
+
+  publishmsgEdge=()=>{
+    console.log("send")
+    PubSub.publish('EDGE',this.state.edgeid);
+  }
+  
 
   // callAPI() {
   //   fetch("http://localhost:9000/testAPI")
@@ -617,7 +102,7 @@ export default class App extends Component {
   }
   handleClick(e) {
     e.preventDefault();
-    axios.get(`http://localhost:8080/user/demo1`)
+    axios.get(`http://localhost:8080/kaggle/user`)
       .then(res => {
         const persons = res.data;
         console.log(persons);
@@ -625,6 +110,36 @@ export default class App extends Component {
   }
 
   componentDidMount() {
+
+    var token = PubSub.subscribe('ClickList',(_,stateObj)=>{
+      console.log(stateObj); 
+      if(stateObj[0]==='false'){
+      axios.get(`http://localhost:8080/kaggle/`+stateObj[1].toLowerCase()+`/`+stateObj[2])
+      .then(res => {
+        console.log("res",res.data)
+        this.setState({comboData:res.data});
+        console.log("Click in",this.state.comboData)
+      });
+      }
+      else if (stateObj[0]==='true'){
+        var adr="http://localhost:8080/kaggle/edge/view/user/150/item/452955";
+        console.log(`http://localhost:8080/kaggle/edge/`+stateObj[6].toLowerCase()+`/`+stateObj[1].toLowerCase()+'/'+stateObj[4]+'/'+stateObj[3].toLowerCase()+'/'+stateObj[5])
+        axios.get(`http://localhost:8080/kaggle/edge/`+stateObj[6].toLowerCase()+`/`+stateObj[1].toLowerCase()+'/'+stateObj[4]+'/'+stateObj[3].toLowerCase()+'/'+stateObj[5])
+        .then(res => {
+          console.log("res",res.data)
+          this.setState({comboData:res.data});
+          console.log("Click in",this.state.comboData)
+        });
+
+
+      }
+
+      console.log("Click",this.state.comboData)
+      this.comboGraph.changeData(this.state.comboData);
+
+		} );
+
+    console.log("Click v",this.state.comboData)
    // this.callAPI();
    const tooltipForce = new G6.Tooltip({
     offsetX: 10,
@@ -666,7 +181,7 @@ export default class App extends Component {
           <li>Type: ${e.item.getType()}</li>
         </ul>
         <ul>
-          <li>Label: ${e.item.getModel().label || e.item.getModel().id}</li>
+          <li>Label: ${e.item.getModel().id}</li>
         </ul>`;
       return outDiv;
     },
@@ -702,7 +217,7 @@ export default class App extends Component {
       }
     );
     this.forceGraph.edge((edge) => {
-      if (edge.label == 'view' || edge.label == 'transaction' || edge.label == 'addtocart') {
+      if (edge.label === 'view' || edge.label === 'transaction' || edge.label === 'addtocart') {
         return {
           id: edge.id,
           style: {
@@ -734,27 +249,47 @@ export default class App extends Component {
       this.refreshDragedNodePosition(e);
     });
     this.forceGraph.on('node:mousedown', (evt) => {
+
       const { item } = evt;
       this.forceGraph.setItemState(item, 'selected', true);
       //console.log(item);
       //console.log(item._cfg.id);
      
       var id = item._cfg.id;
-      this.setState({nbClique:this.state.nbClique+1})
       this.setState({clickId:id});
-      if (this.state.clickId == '01') {
+      if (this.state.clickId === '01') {
+       this.setState({clickLabel:"user"});
         //user
-        this.comboGraph.changeData(this.state.userData);
-      }
-      else if (this.state.clickId == '02') {
-        //item
-        this.comboGraph.changeData(this.state.itemData);
-      }
-      else if (this.state.clickId == '03') {
-        //category
-        this.comboGraph.changeData(this.state.categoryData);
-      }
+        axios.get(`http://localhost:8080/kaggle/user/combouser`)
+        .then(res => {
+          this.setState({comboData:res.data});
+        });
 
+      }
+      else if (this.state.clickId === '02') {
+        //item
+        this.setState({clickLabel:"item"});
+        axios.get(`http://localhost:8080/kaggle/item/comboitem`)
+        .then(res => {
+          this.setState({comboData:res.data});
+
+        });
+      }
+      else if (this.state.clickId === '03') {
+        //category
+        this.setState({clickLabel:"category"});
+        axios.get(`http://localhost:8080/kaggle/category/combocategory`)
+        .then(res => {
+          this.setState({comboData:res.data});
+        })
+      }
+      
+      axios.get(`http://localhost:8080/kaggle/node/`+this.state.clickLabel)
+      .then(res => {
+        this.setState({nodeid:res.data});
+      });
+      this.comboGraph.changeData(this.state.comboData);
+      this.publishmsgNode();
     });
 
     this.forceGraph.on('edge:mousedown', (evt) => {
@@ -764,28 +299,49 @@ export default class App extends Component {
       //console.log(item._cfg.model.label)
 
       var label = item._cfg.model.label;
-      //this.setState({nbClique:this.state.nbClique+1})
       this.setState({clickLabel:label});
-      if (this.state.clickLabel == 'view') {
+      if (this.state.clickLabel === 'view') {
         //view
-        this.comboGraph.changeData(this.state.viewData);
+        axios.get(`http://localhost:8080/kaggle/combo/edge/view`)
+        .then(res => {
+          this.setState({comboData:res.data});
+        })
       }
-      else if (this.state.clickLabel == 'addtocart') {
+      else if (this.state.clickLabel === 'addtocart') {
         //addtocart
-        this.comboGraph.changeData(this.state.addtocartData);
+        axios.get(`http://localhost:8080/kaggle/combo/edge/addtocart`)
+        .then(res => {
+          this.setState({comboData:res.data});
+        })
       }
-      else if (this.state.clickLabel == 'transaction') {
+      else if (this.state.clickLabel === 'transaction') {
         //transaction
-        this.comboGraph.changeData(this.state.transactionData);
+        axios.get(`http://localhost:8080/kaggle/combo/edge/transaction`)
+        .then(res => {
+          this.setState({comboData:res.data});
+        })
       }
-      else if (this.state.clickLabel == 'belongto') {
+      else if (this.state.clickLabel === 'belongto') {
         //belongto
-        this.comboGraph.changeData(this.state.belongtoData);
+        axios.get(`http://localhost:8080/kaggle/combo/edge/belongto`)
+        .then(res => {
+          this.setState({comboData:res.data});
+        })
       }
-      else if (this.state.clickLabel == 'subCategory') {
+      else if (this.state.clickLabel === 'subCategory') {
         //subCategory
-        this.comboGraph.changeData(this.state.subCategoryData);
+        axios.get(`http://localhost:8080/kaggle/combo/edge/subcategory`)
+        .then(res => {
+          this.setState({comboData:res.data});
+        })
       }
+      axios.get(`http://localhost:8080/kaggle/edge/`+this.state.clickLabel)
+      .then(res => {
+        this.setState({edgeid:res.data});
+        this.publishmsgEdge();
+      })
+
+      this.comboGraph.changeData(this.state.comboData);
     })
 
     this.forceGraph.on('canvas:click', (evt) => {
@@ -799,10 +355,9 @@ export default class App extends Component {
 
     })
 
-
      //combo graph
-      const width = document.getElementById('combo').scrollWidth || 500;
-      const height = document.getElementById('combo').scrollHeight || 500;
+      const width = document.getElementById('combo').scrollWidth || 470;
+      const height = document.getElementById('combo').scrollHeight || 600;
       this.comboGraph = new G6.Graph({
         container: document.getElementById('combo'),
         width,
@@ -832,7 +387,7 @@ export default class App extends Component {
         },
       });
      
-      this.comboGraph.data(this.state.itemData);
+      this.comboGraph.data(this.state.comboData);
   
       this.comboGraph.render();
       this.comboGraph.on('combo:mouseenter', (evt) => {
@@ -891,11 +446,13 @@ export default class App extends Component {
 
 
   render() {
+    console.log(this)
     return ( 
+      
       <div className="App">
         <Header></Header>
         <button onClick={this.handleClick}></button>
-        <CenteredGrid></CenteredGrid>
+        <CenteredGrid clickId={this.state.clickId} clickLabel={this.state.clickLabel}></CenteredGrid>
         <p className="App-intro">{this.state.apiResponse}</p>
         <Footer></Footer> 
       </div>
