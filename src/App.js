@@ -34,7 +34,7 @@ export default class App extends Component {
             x: 400,
             y: 150,
             label: 'Item',
-            type: 'diamond'
+            type: 'circle'
           },
           {
             id: '03',
@@ -73,436 +73,6 @@ export default class App extends Component {
         ],
 
       },
-      testData: {
-        nodes: [
-          {
-            id: '0',
-            comboId: 'a',
-          },
-          {
-            id: '1',
-            comboId: 'a',
-          },
-          {
-            id: '2',
-            comboId: 'a',
-          },
-          {
-            id: '3',
-            comboId: 'a',
-          },
-          {
-            id: '4',
-            comboId: 'a',
-          },
-          {
-            id: '5',
-            comboId: 'a',
-          },
-          {
-            id: '6',
-            comboId: 'a',
-          },
-          {
-            id: '7',
-            comboId: 'a',
-          },
-          {
-            id: '8',
-            comboId: 'a',
-          },
-          {
-            id: '9',
-            comboId: 'a',
-          },
-          {
-            id: '10',
-            comboId: 'a',
-          },
-          {
-            id: '11',
-            comboId: 'a',
-          },
-          {
-            id: '12',
-            comboId: 'a',
-          },
-          {
-            id: '13',
-            comboId: 'a',
-          },
-          {
-            id: '14',
-            comboId: 'a',
-          },
-          {
-            id: '15',
-            comboId: 'a',
-          },
-          {
-            id: '16',
-            comboId: 'b',
-          },
-          {
-            id: '17',
-            comboId: 'b',
-          },
-          {
-            id: '18',
-            comboId: 'b',
-          },
-          {
-            id: '19',
-            comboId: 'b',
-          },
-          {
-            id: '20',
-          },
-          {
-            id: '21',
-          },
-          {
-            id: '22',
-          },
-          {
-            id: '23',
-            comboId: 'c',
-          },
-          {
-            id: '24',
-            comboId: 'a',
-          },
-          {
-            id: '25',
-          },
-          {
-            id: '26',
-          },
-          {
-            id: '27',
-            comboId: 'c',
-          },
-          {
-            id: '28',
-            comboId: 'c',
-          },
-          {
-            id: '29',
-            comboId: 'c',
-          },
-          {
-            id: '30',
-            comboId: 'c',
-          },
-          {
-            id: '31',
-            comboId: 'c',
-          },
-          {
-            id: '32',
-            comboId: 'd',
-          },
-          {
-            id: '33',
-            comboId: 'd',
-          },
-        ],
-        edges: [
-          {
-            source: 'a',
-            target: 'b',
-            label: 'Combo A - Combo B',
-            size: 3,
-            labelCfg: {
-              autoRotate: true,
-              style: {
-                stroke: '#fff',
-                lineWidth: 5,
-                fontSize: 20,
-              },
-            },
-            style: {
-              stroke: 'red',
-            },
-          },
-          {
-            source: 'a',
-            target: '33',
-            label: 'Combo-Node',
-            size: 3,
-            labelCfg: {
-              autoRotate: true,
-              style: {
-                stroke: '#fff',
-                lineWidth: 5,
-                fontSize: 20,
-              },
-            },
-            style: {
-              stroke: 'blue',
-            },
-          },
-          {
-            source: '0',
-            target: '1',
-          },
-          {
-            source: '0',
-            target: '2',
-          },
-          {
-            source: '0',
-            target: '3',
-          },
-          {
-            source: '0',
-            target: '4',
-          },
-          {
-            source: '0',
-            target: '5',
-          },
-          {
-            source: '0',
-            target: '7',
-          },
-          {
-            source: '0',
-            target: '8',
-          },
-          {
-            source: '0',
-            target: '9',
-          },
-          {
-            source: '0',
-            target: '10',
-          },
-          {
-            source: '0',
-            target: '11',
-          },
-          {
-            source: '0',
-            target: '13',
-          },
-          {
-            source: '0',
-            target: '14',
-          },
-          {
-            source: '0',
-            target: '15',
-          },
-          {
-            source: '0',
-            target: '16',
-          },
-          {
-            source: '2',
-            target: '3',
-          },
-          {
-            source: '4',
-            target: '5',
-          },
-          {
-            source: '4',
-            target: '6',
-          },
-          {
-            source: '5',
-            target: '6',
-          },
-          {
-            source: '7',
-            target: '13',
-          },
-          {
-            source: '8',
-            target: '14',
-          },
-          {
-            source: '9',
-            target: '10',
-          },
-          {
-            source: '10',
-            target: '22',
-          },
-          {
-            source: '10',
-            target: '14',
-          },
-          {
-            source: '10',
-            target: '12',
-          },
-          {
-            source: '10',
-            target: '24',
-          },
-          {
-            source: '10',
-            target: '21',
-          },
-          {
-            source: '10',
-            target: '20',
-          },
-          {
-            source: '11',
-            target: '24',
-          },
-          {
-            source: '11',
-            target: '22',
-          },
-          {
-            source: '11',
-            target: '14',
-          },
-          {
-            source: '12',
-            target: '13',
-          },
-          {
-            source: '16',
-            target: '17',
-          },
-          {
-            source: '16',
-            target: '18',
-          },
-          {
-            source: '16',
-            target: '21',
-          },
-          {
-            source: '16',
-            target: '22',
-          },
-          {
-            source: '17',
-            target: '18',
-          },
-          {
-            source: '17',
-            target: '20',
-          },
-          {
-            source: '18',
-            target: '19',
-          },
-          {
-            source: '19',
-            target: '20',
-          },
-          {
-            source: '19',
-            target: '33',
-          },
-          {
-            source: '19',
-            target: '22',
-          },
-          {
-            source: '19',
-            target: '23',
-          },
-          {
-            source: '20',
-            target: '21',
-          },
-          {
-            source: '21',
-            target: '22',
-          },
-          {
-            source: '22',
-            target: '24',
-          },
-          {
-            source: '22',
-            target: '25',
-          },
-          {
-            source: '22',
-            target: '26',
-          },
-          {
-            source: '22',
-            target: '23',
-          },
-          {
-            source: '22',
-            target: '28',
-          },
-          {
-            source: '22',
-            target: '30',
-          },
-          {
-            source: '22',
-            target: '31',
-          },
-          {
-            source: '22',
-            target: '32',
-          },
-          {
-            source: '22',
-            target: '33',
-          },
-          {
-            source: '23',
-            target: '28',
-          },
-          {
-            source: '23',
-            target: '27',
-          },
-          {
-            source: '23',
-            target: '29',
-          },
-          {
-            source: '23',
-            target: '30',
-          },
-          {
-            source: '23',
-            target: '31',
-          },
-          {
-            source: '23',
-            target: '33',
-          },
-          {
-            source: '32',
-            target: '33',
-          },
-        ],
-        combos: [
-          {
-            id: 'a',
-            label: 'Combo A',
-          },
-          {
-            id: 'b',
-            label: 'Combo B',
-          },
-          {
-            id: 'c',
-            label: 'Combo D',
-          },
-          {
-            id: 'd',
-            label: 'Combo D',
-            parentId: 'b',
-          },
-        ],
-      }
     };
     this.comboGraph = null;
     this.forceGraph = null;
@@ -616,6 +186,13 @@ export default class App extends Component {
       const outDiv = document.createElement('div');
       outDiv.style.width = 'fit-content';
       //outDiv.style.padding = '0px 0px 20px 0px';
+      var attributesList="";
+      Object.keys(e.item.getModel().attributes).forEach(key => {
+        if(key!=="startvalidtime"& key!=="endvalidtime"){
+            attributesList=attributesList+"<ul><li>"+key+":"+e.item.getModel().attributes[key]+"</li></ul>";}
+        return  attributesList;
+      })
+
       outDiv.innerHTML = `
         <h4>Info</h4>
         <ul>
@@ -625,7 +202,7 @@ export default class App extends Component {
           <li>InstanceId: ${e.item.getModel().instanceid}</li>
         </ul>
         <ul>
-        <li>Group: ${e.item.getModel().comboId}</li>
+        <li>EntityId: ${e.item.getModel().comboId}</li>
       </ul>
         <ul>
         <li>Startvalidtime: ${e.item.getModel().startvalidtime}</li>
@@ -633,7 +210,7 @@ export default class App extends Component {
       <ul>
       <li>Endvalidtime: ${e.item.getModel().endvalidtime}</li>
     </ul>
-      `;
+      `+attributesList;
       return outDiv;
     },
   });
@@ -646,8 +223,16 @@ export default class App extends Component {
     // custom the tooltip's content
     getContent: (e) => {
       const outDiv = document.createElement('div');
+
       outDiv.style.width = 'fit-content';
       //outDiv.style.padding = '0px 0px 20px 0px';
+      var attributesList="";
+      Object.keys(e.item.getModel().attributes).forEach(key => {
+        if(key!=="startvalidtime"& key!=="endvalidtime"){
+            attributesList=attributesList+"<ul><li>"+key+":"+e.item.getModel().attributes[key]+"</li></ul>";}
+        return  attributesList;
+      })
+
       outDiv.innerHTML = `
         <h4>Info</h4>
         <ul>
@@ -669,7 +254,7 @@ export default class App extends Component {
       <ul>
       <li>Endvalidtime: ${e.item.getModel().attributes.endvalidtime}</li>
     </ul>
-      `;
+      `+attributesList;
       return outDiv;
     },
   });
@@ -682,7 +267,7 @@ export default class App extends Component {
         container: document.getElementById('force'),
         width: widthF,
         height: heightF,
-        plugins: [tooltipForce],
+        plugins: [],
         layout: {
           type: 'force',
         },
@@ -697,11 +282,35 @@ export default class App extends Component {
           style: {
             // fill: '#steelblue',
             //stroke: 'red',
-            lineWidth: 2,
+            //lineDash: [2, 2],
+            lineWidth: 1,
           },
 
         }
       }
+    );
+    this.forceGraph.node((node) => {
+      if (node.label === 'Item') {
+       
+        return {
+          id: node.id,
+          style: {
+            lineDash: [2, 2],
+            lineWidth: 5,
+          },
+        };
+      }
+      else {
+        return {
+          id: node.id,
+          style: {
+            lineWidth: 1,
+
+          },
+        }
+      }
+
+    }
     );
     this.forceGraph.edge((edge) => {
       if (edge.label === 'view' || edge.label === 'transaction' || edge.label === 'addtocart') {
@@ -709,7 +318,7 @@ export default class App extends Component {
           id: edge.id,
           style: {
             lineDash: [2, 2],
-            lineWidth: 2.5,
+            lineWidth: 5,
           },
         };
       }
@@ -717,7 +326,7 @@ export default class App extends Component {
         return {
           id: edge.id,
           style: {
-            lineWidth: 2.5,
+            lineWidth: 1,
 
           },
         }
@@ -804,7 +413,7 @@ export default class App extends Component {
          targetlabel="category";
       }
       axios.get(`http://localhost:8080/kaggle/combo/`+this.state.clickLabel+`/`+sourcelabel+`/`+targetlabel)
-     // axios.get(`http://localhost:8080/kaggle/test/view/user/item`)
+      //axios.get(`http://localhost:8080/kaggle/test/view/user/item`)
       .then(res => {
         this.setState({comboData:res.data});
       })
@@ -813,8 +422,6 @@ export default class App extends Component {
         this.setState({edgeid:res.data});
         this.publishmsgEdge();
       })
-
-
     })
 
     this.forceGraph.on('canvas:click', (evt) => {
@@ -835,7 +442,7 @@ export default class App extends Component {
         container: document.getElementById('combo'),
         width,
         height,
-        plugins: [tooltipCombo,tooltipEdge,tooltipNode],
+        plugins: [],
         fitView: true,
         layout: {
           type: 'comboForce',
@@ -859,12 +466,14 @@ export default class App extends Component {
           style: {
             lineWidth: 1,
           },
-          defaultNode: {
-            //size: 50,
-          },
+
           labelCfg: {
             position: 'top',
           },
+        },
+        defaultNode: {
+          type:'circle',
+          size: 25,
         },
       });
      
@@ -894,12 +503,7 @@ export default class App extends Component {
         //console.log(item)
         //console.log(item._cfg.id)
       });
-      this.comboGraph.on('node:drag', (evt) => {
-        this.comboGraph.layout();
-        this.refreshDragedNodePosition(evt);
-        //console.log(item)
-        //console.log(item._cfg.id)
-      });
+     
   
       this.comboGraph.on('edge:mousedown', (evt) => {
         const { item } = evt;
@@ -929,7 +533,7 @@ export default class App extends Component {
            G6.Util.processParallelEdges(this.state.comboData.edges);};
    (this.state.isEdge===true)? this.comboGraph.updateLayout({type: 'comboForce', nodeSpacing: (d) => 8,
    preventOverlap:true,
-   preventComboOverlap:true,},):this.comboGraph.updateLayout({type: 'grid',
+   preventComboOverlap:true,},):this.comboGraph.updateLayout({type: 'fruchterman',
    preventOverlap: true,
   },)
     this.comboGraph.changeData(this.state.comboData);
@@ -953,7 +557,7 @@ export default class App extends Component {
       
       <div className="App">
         <Header></Header>
-        <button onClick={this.handleClick}></button>
+        {/*<button onClick={this.handleClick}></button>*/}
         <CenteredGrid clickId={this.state.clickId} clickLabel={this.state.clickLabel}></CenteredGrid>
         <p className="App-intro">{this.state.apiResponse}</p>
         <Footer></Footer> 

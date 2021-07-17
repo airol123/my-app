@@ -17,6 +17,7 @@ export default class Tableau extends Component {
     length:0,
 		nodes:[], 
     relations:[],
+    changes:[],
 	} 
   
   componentDidMount(){
@@ -26,6 +27,7 @@ export default class Tableau extends Component {
         this.setState({isRalation:"false"});
         this.setState({nodes:stateObj.nodes});
         this.setState({labelSource:stateObj.label});
+        this.setState({changes:stateObj.changes});
         //var arry = Array.from(stateObj.nodes);
         this.setState({length:stateObj.nodes.length});
 
@@ -40,6 +42,7 @@ export default class Tableau extends Component {
         this.setState({labelSource:stateObj.sourceLabel});
         this.setState({labelTarget:stateObj.targetLabel});
         this.setState({label:stateObj.label});
+        //this.setState({changes:stateObj.changes});
       //  var arry = Array.from(stateObj.edges);
         this.setState({length:stateObj.edges.length});
 
@@ -63,7 +66,8 @@ export default class Tableau extends Component {
     return (
       
       <ListItem button style={style} key={index} onClick={this.state.isRalation==="false"?()=> this.handleClick([this.state.isRalation,this.state.labelSource,this.state.nodes[index]]) :()=> this.handleClick([this.state.isRalation,this.state.labelSource,this.state.nodes[index],this.state.labelTarget,this.state.relations[index].source,this.state.relations[index].target,this.state.label]) }>
-       {this.state.isRalation==="false"?index === 0 ? <ListItemText primary={`${this.state.labelSource} id :`} /> : <ListItemText primary={`---${this.state.labelSource} ${this.state.nodes[index]} `} />:index === 0 ? <ListItemText primary={`${this.state.labelSource} id -->${this.state.labelTarget} id :`} /> : <ListItemText primary={`---${this.state.labelSource} ${this.state.relations[index].source}-->${this.state.labelTarget} ${this.state.relations[index].target}`} />}
+      {/* {this.state.isRalation==="false"?index === 0 ? <ListItemText primary={`${this.state.labelSource} id  (nbChange) :`} /> : <ListItemText primary={`---${this.state.labelSource} ${this.state.nodes[index]} ${this.state.changes[index]-1}  `} />:index === 0 ? <ListItemText primary={`${this.state.labelSource} id -->${this.state.labelTarget} id  (nbChange):`} /> : <ListItemText primary={`---${this.state.labelSource} ${this.state.relations[index].source}-->${this.state.labelTarget} ${this.state.relations[index].target} ${this.state.changes[index]-1}`} />}*/}
+       {this.state.isRalation==="false"?index === 0 ? <ListItemText primary={`${this.state.labelSource} id   :`} /> : <ListItemText primary={`---${this.state.labelSource} ${this.state.nodes[index-1]}  `} />:index === 0 ? <ListItemText primary={`${this.state.labelSource} id -->${this.state.labelTarget} id  :`} /> : <ListItemText primary={`---${this.state.labelSource} ${this.state.relations[index-1].source}-->${this.state.labelTarget} ${this.state.relations[index-1].target}`} />}
      
       </ListItem>
     );
@@ -71,8 +75,8 @@ export default class Tableau extends Component {
 
   render() {
     return (
-         <div className="root">
-      <FixedSizeList height={400} width={310} itemSize={46} itemCount={this.state.length}>
+         <div>
+      <FixedSizeList  className="root" height={500} width={300} itemSize={35} itemCount={this.state.length}>
         {this.renderRow}
       </FixedSizeList>
     </div>

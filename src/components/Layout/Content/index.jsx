@@ -4,6 +4,7 @@ import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import Tableau from './Tableau'
 import './index.css'
+import theme from'../../theme.jsx'
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -20,66 +21,25 @@ export default function CenteredGrid() {
 
   return (
     <div className={classes.root}>
-      <Grid container spacing={0}>
-        <Grid item xs={1}>
-          <div id='legend'>
-
-            <div className="divcss">
-              <div >
-                <h3 >Legend</h3>
-              </div>
-              <div >
-                <div className="divcss2">
-                  <img alt='legende' src="https://s3.jpg.cm/2021/06/21/IRcYk5.png" width="30" height="30" border="0"></img>
-                  {/* <img src='https://s3.jpg.cm/2021/06/20/IRWQaW.png' width="50" height="50" border="0" ></img>*/}
-                </div>
-                <div className="divcss1 fontcss"> Evolvable entities</div>
-              </div>
-              <div>
-                <div className="divcss2">
-                  <img src="https://s3.jpg.cm/2021/06/17/IP0jwG.png" width="30" height="30" alt="node statique" border="0"></img>
-                </div>
-                <div className="divcss1 fontcss">Static entities</div>
-              </div>
-
-              <div>
-                <div className="divcss2">
-                  <img src="https://s3.jpg.cm/2021/06/21/IRcMSO.png" alt="edge evolution" border="0"></img>
-                </div>
-                <div className="divcss1 fontcss">Evolvable relationships</div>
-              </div>
-
-              <div>
-                <div className="divcss2">
-                  <img src="https://s3.jpg.cm/2021/06/21/IRcO3w.png" alt="edge statique" border="0"></img>
-                </div>
-                <div className="divcss1 fontcss">Static relationships</div>
-              </div>
-
-
-
-            </div>
-
-
-
-          </div>
+      <Grid container spacing={2}>
+        <Grid   item xs={9} >
+          <div className="gridcss1 backgroundbord " id='force'></div>
         </Grid>
-        <Grid item xs={8}>
-          <div id='force'></div>
+        <Grid   item xs={3} >
+          <div className="gridcss2 backgroundbord listfont"><Tableau ></Tableau></div>
+          
         </Grid>
-        <Grid item xs={3}>
-          <Tableau></Tableau>
-        </Grid>
-        <Grid  item xs={12}>
-         <div id='comboGroup'> 
+        <Grid  item xs={12} >
+         <div id='comboGroup' className="gridcss3 backgroundbord"> 
          <div  id='combo' ></div>
 
          </div>
         </Grid>
 
-        <Grid item xs={12}>
+        <Grid item xs={6}>
           <Paper className={classes.paper}>timebar</Paper>
         </Grid>
+
 
       </Grid>
     </div>
