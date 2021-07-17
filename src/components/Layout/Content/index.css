@@ -1,7 +1,29 @@
+/*style for div*/
 .divcss1{  height:40px;width: 75px; float: left; text-align:justify;} 
 .divcss2{  height:40px;width: 50px; float: left;} 
-.divcss{ border:2px inset black; width: 125px; height:220px; margin-left: 5%;} 
+.divcss{ border:2px inset black; width: 125px; height:450px; margin-left: 5%;} 
 .fontcss{font-family:Arial,Helvetica,sans-serif; font-size: 10px;}
 .divcss3{height:500px; width: 600px;border:2px inset black;margin:0 auto;}
-
 .divcss5{height:500px; width: 600px;border:2px inset rgb(219, 23, 23);margin:0 auto;}
+
+/*style for grid*/
+.gridcss1{ background-color:rgba(255, 255, 255, 0.699); height: 500px;  } 
+.gridcss2{ background-color:rgba(255, 255, 255, 0.534);   } 
+.gridcss3{ background-color:rgba(255, 255, 255, 0.678);  } 
+
+.backgroundbord{
+
+    color: rgba(255, 255, 255, 0.623);
+    border: 1px solid;
+    border-radius: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+
+}
+/*style for font*/
+.listfont{
+    -webkit-text-fill-color: #3d3b3b;
+    /*-webkit-text-stroke: 1.2px rgb(255, 255, 255);*/
+
+}
+
