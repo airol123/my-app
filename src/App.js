@@ -86,7 +86,7 @@ export default class App extends Component {
 
   //publish message
   publishmsgNode=()=>{
-    PubSub.publish('MY TOPIC',this.state.nodeid);
+    PubSub.publish('NODE',this.state.nodeid);
   }
 
   publishmsgEdge=()=>{
@@ -133,8 +133,6 @@ export default class App extends Component {
 
     e.preventDefault();
     this.saveUndo();
-    //this.undo.unshift(this.state);
-  
     this.setState({clickId:this.redo[0].clickId,
       isNode:this.redo[0].isNode,
       clickLabel:this.redo[0].clickLabel,
@@ -153,7 +151,6 @@ export default class App extends Component {
   componentDidMount() {
      this.activeBtn();
      PubSub.subscribe('ClickList',(_,stateObj)=>{
-      //this.undo.unshift(this.state) ;
       this.saveUndo();
       if(stateObj[0]==='false'){
       axios.get(`http://localhost:8080/kaggle/`+stateObj[1].toLowerCase()+`/`+stateObj[2])
@@ -420,8 +417,7 @@ export default class App extends Component {
     });
 
     this.forceGraph.on('edge:mousedown', (evt) => {
-      this.undo.unshift(this.state) ;
-      //this.saveUndo();
+      this.saveUndo();
       const { item } = evt;
       this.forceGraph.setItemState(item, 'selected', true);
       //console.log(item._cfg);
@@ -464,7 +460,7 @@ export default class App extends Component {
         this.setState({comboData:res.data});
         this.combo=res.data;
       })
-      axios.get(`http://localhost:8080/kaggle/edge/`+this.state.clickLabel)
+      axios.get(`http://localhost:8080/kaggle/edge/`+this.state.clickLabel+'/1')
       .then(res => {
 
         this.setState({edgeid:res.data});
@@ -619,7 +615,7 @@ export default class App extends Component {
     this.setState({comboData:res.data})
     this.stateVirtual=res.data;
 
-    let result=await  axios.get(`http://localhost:8080/kaggle/node/`+this.state.clickLabel)
+    let result=await  axios.get(`http://localhost:8080/kaggle/node/`+this.state.clickLabel+'/1')
     this.setState({nodeid:result.data},()=>{this.publishmsgNode();});
 
 

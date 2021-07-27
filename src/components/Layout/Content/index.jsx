@@ -4,7 +4,6 @@ import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import Tableau from './Tableau'
 import './index.css'
-import theme from'../../theme.jsx'
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -27,7 +26,6 @@ export default function CenteredGrid() {
         </Grid>
         <Grid   item xs={3} >
           <div className="gridcss2 backgroundbord listfont"><Tableau ></Tableau></div>
-          
         </Grid>
         <Grid  item xs={12} >
          <div id='comboGroup' className="gridcss3 backgroundbord"> 
@@ -35,7 +33,6 @@ export default function CenteredGrid() {
 
          </div>
         </Grid>
-
         <Grid item xs={6}>
           <Paper className={classes.paper}>timebar</Paper>
         </Grid>
