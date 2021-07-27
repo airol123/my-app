@@ -1,22 +1,26 @@
 //import logo from './logo.svg';
 import G6 from '@antv/g6';
 import './App.css';
-import { Footer, Header, CenteredGrid } from './components/Layout'
+import { Footer, Header, CenteredGrid ,UndoButton,RedoButton} from './components/Layout'
 import axios from 'axios';
-
 import React,{ Component } from 'react'
 import PubSub from 'pubsub-js'
-
+import cloneDeep from "lodash/cloneDeep";
+import { ContactSupportOutlined } from '@material-ui/icons';
 export default class App extends Component {
   constructor(props) {
     super(props);
+    this.undo=[];
+    this.redo=[];
+    this.cleundo=true;
+    this.cleredo=true;
+    this.combo={};
+    this.stateVirtual={}; 
     //state
     this.state = {
       clickId:"",
-      test:"",
-      isEdge:true,
+      isNode:true,
       clickLabel:"",
-      apiResponse: "",
       comboData: {
       },
       nodeid:{},
@@ -73,6 +77,8 @@ export default class App extends Component {
         ],
 
       },
+      test:"",
+
     };
     this.comboGraph = null;
     this.forceGraph = null;
@@ -80,12 +86,10 @@ export default class App extends Component {
 
   //publish message
   publishmsgNode=()=>{
-
     PubSub.publish('MY TOPIC',this.state.nodeid);
   }
 
   publishmsgEdge=()=>{
-    console.log("send")
     PubSub.publish('EDGE',this.state.edgeid);
   }
   
@@ -96,31 +100,75 @@ export default class App extends Component {
   //     .then(res => this.setState({ apiResponse: res }));
   //     console.log('api');
   // }
-  callAPI() {
+/*   callAPI() {
     fetch("http://localhost:9000/testAPI")
       .then(res => res.text())
       .then(res => { console.log(res); });
 
-  }
-  handleClick=(e)=> {
+  } */
+  handleUndo=(e)=> {
     e.preventDefault();
-    this.setState({test :"test"})
+    this.saveRedo();
+    //this.redo.unshift(this.state);
+    this.setState({clickId:this.undo[0].clickId,
+      isNode:this.undo[0].isNode,
+      clickLabel:this.undo[0].clickLabel,
+
+      comboData: this.undo[0].comboData,
+      
+      nodeid:this.undo[0].nodeid,
+      edgeid:this.undo[0].edgeid,},
+      ()=>{
+         this.publishmsgNode();
+         this.publishmsgEdge();
+         }
+    );
+  this.undo.splice(0,1);
+  //
+
+
+  }
+
+  handleRedo=(e)=> {
+
+    e.preventDefault();
+    this.saveUndo();
+    //this.undo.unshift(this.state);
+  
+    this.setState({clickId:this.redo[0].clickId,
+      isNode:this.redo[0].isNode,
+      clickLabel:this.redo[0].clickLabel,
+      comboData: this.redo[0].comboData,
+      nodeid:this.redo[0].nodeid,
+      edgeid:this.redo[0].edgeid,},()=>{
+         this.publishmsgNode();
+         this.publishmsgEdge();
+  });
+  this.redo.splice(0,1);
+  //
+  
+   
   }
 
   componentDidMount() {
-
+     this.activeBtn();
      PubSub.subscribe('ClickList',(_,stateObj)=>{
+      //this.undo.unshift(this.state) ;
+      this.saveUndo();
       if(stateObj[0]==='false'){
       axios.get(`http://localhost:8080/kaggle/`+stateObj[1].toLowerCase()+`/`+stateObj[2])
       .then(res => {
         this.setState({comboData:res.data});
+       this.combo=res.data;
       });
       }
       else if (stateObj[0]==='true'){
        axios.get(`http://localhost:8080/kaggle/edge/`+stateObj[6].toLowerCase()+`/`+stateObj[1].toLowerCase()+'/'+stateObj[4]+'/'+stateObj[3].toLowerCase()+'/'+stateObj[5])
         .then(res => {
           this.setState({comboData:res.data});
+          this.combo=res.data
         });
+
       }
 
 
@@ -283,7 +331,7 @@ export default class App extends Component {
             // fill: '#steelblue',
             //stroke: 'red',
             //lineDash: [2, 2],
-            lineWidth: 1,
+            lineWidth: 0.5,
           },
 
         }
@@ -296,7 +344,7 @@ export default class App extends Component {
           id: node.id,
           style: {
             lineDash: [2, 2],
-            lineWidth: 5,
+            lineWidth: 8,
           },
         };
       }
@@ -304,7 +352,7 @@ export default class App extends Component {
         return {
           id: node.id,
           style: {
-            lineWidth: 1,
+            lineWidth: 0.5,
 
           },
         }
@@ -318,7 +366,7 @@ export default class App extends Component {
           id: edge.id,
           style: {
             lineDash: [2, 2],
-            lineWidth: 5,
+            lineWidth: 7,
           },
         };
       }
@@ -326,7 +374,7 @@ export default class App extends Component {
         return {
           id: edge.id,
           style: {
-            lineWidth: 1,
+            lineWidth: 1.5,
 
           },
         }
@@ -346,47 +394,44 @@ export default class App extends Component {
     });
     this.forceGraph.on('node:mousedown', (evt) => {
 
+      this.saveUndo();
       const { item } = evt;
       this.forceGraph.setItemState(item, 'selected', true);
       //console.log(item._cfg.id);
-      this.setState({isEdge:true});
+      //this.setState({isNode:true});
       var id = item._cfg.id;
       this.setState({clickId:id});
       if (this.state.clickId === '01') {
-       this.setState({clickLabel:"user"});
+       this.setState({isNode:true,clickLabel:"user"});
         //user
       }
       else if (this.state.clickId === '02') {
         //item
-        this.setState({clickLabel:"item"});
+        this.setState({isNode:true,clickLabel:"item"});
       }
       else if (this.state.clickId === '03') {
         //category
-        this.setState({clickLabel:"category"});
+        this.setState({isNode:true,clickLabel:"category"});
       }
 
-      axios.get(`http://localhost:8080/kaggle/combo/`+this.state.clickLabel)
-      .then(res => {
-        this.setState({comboData:res.data});
-      })
-      
-      axios.get(`http://localhost:8080/kaggle/node/`+this.state.clickLabel)
-      .then(res => {
-        this.setState({nodeid:res.data});
-        this.publishmsgNode();
-      });
+
+      this.getComboData();
+
     });
 
     this.forceGraph.on('edge:mousedown', (evt) => {
+      this.undo.unshift(this.state) ;
+      //this.saveUndo();
       const { item } = evt;
       this.forceGraph.setItemState(item, 'selected', true);
       //console.log(item._cfg);
       //console.log(item._cfg.model.label)
-      this.setState({isEdge:false});
+
+     // this.setState({});
       var label = item._cfg.model.label;
       var sourcelabel="user";
       var targetlabel="item";
-      this.setState({clickLabel:label});
+      this.setState({isNode:false,clickLabel:label});
       if (this.state.clickLabel === 'view') {
         //view
          sourcelabel="user";
@@ -415,11 +460,15 @@ export default class App extends Component {
       axios.get(`http://localhost:8080/kaggle/combo/`+this.state.clickLabel+`/`+sourcelabel+`/`+targetlabel)
       //axios.get(`http://localhost:8080/kaggle/test/view/user/item`)
       .then(res => {
+
         this.setState({comboData:res.data});
+        this.combo=res.data;
       })
       axios.get(`http://localhost:8080/kaggle/edge/`+this.state.clickLabel)
       .then(res => {
+
         this.setState({edgeid:res.data});
+    
         this.publishmsgEdge();
       })
     })
@@ -526,22 +575,36 @@ export default class App extends Component {
 
   }
 
+  activeBtn=()=>{
+ if(this.redo.length===0){
+       this.cleredo=true;
+    }
+ if (this.undo.length===1){
+       this.cleundo=true;
+       }
+  if(this.undo.length>1){
+      this.cleundo=false;
+    }
+    if(this.redo.length>=1){
+      this.cleredo=false;}
+  }
+
+
   componentDidUpdate(){
+
+    
     console.log("change data");
     if (typeof(this.state.comboData.edges)!='undefined'){ 
       console.log("util process parallel ")
            G6.Util.processParallelEdges(this.state.comboData.edges);};
-   (this.state.isEdge===true)? this.comboGraph.updateLayout({type: 'comboForce', nodeSpacing: (d) => 8,
+   (this.state.isNode===true)? this.comboGraph.updateLayout({type: 'comboForce', nodeSpacing: (d) => 8,
    preventOverlap:true,
-   preventComboOverlap:true,},):this.comboGraph.updateLayout({type: 'fruchterman',
+   preventComboOverlap:true,},):this.comboGraph.updateLayout({type: 'random',
    preventOverlap: true,
   },)
     this.comboGraph.changeData(this.state.comboData);
-    
-
-
   }
-
+//fruchterman
 
   refreshDragedNodePosition(e) {
     const model = e.item.get('model');
@@ -551,15 +614,49 @@ export default class App extends Component {
 
 
 
+  async getComboData(){
+    let res=await  axios.get(`http://localhost:8080/kaggle/combo/`+this.state.clickLabel)
+    this.setState({comboData:res.data})
+    this.stateVirtual=res.data;
+
+    let result=await  axios.get(`http://localhost:8080/kaggle/node/`+this.state.clickLabel)
+    this.setState({nodeid:result.data},()=>{this.publishmsgNode();});
+
+
+  }
+
+  saveUndo=()=>{
+    //console.log("statu actuel",this.state)
+    //console.log("before save undo", this.undo)
+    //let deepState = JSON.parse(JSON.stringify(this.state))
+    let deepState = cloneDeep(this.state)
+    this.undo.unshift(deepState);
+    //console.log("after save undo", this.undo)
+  }
+
+
+  saveRedo=()=>{
+    
+    let deepState = cloneDeep(this.state)
+    this.redo.unshift(deepState);
+
+  }
+
+  
   render() {
-    console.log(this)
+    console.log("state",this.state)
+    this.activeBtn();
     return ( 
       
       <div className="App">
+         <UndoButton handlerClick={this.handleUndo} cle={this.cleundo}></UndoButton>
+        <RedoButton handlerClick={this.handleRedo} cle={this.cleredo}></RedoButton>
         <Header></Header>
-        {/*<button onClick={this.handleClick}></button>*/}
+        
         <CenteredGrid clickId={this.state.clickId} clickLabel={this.state.clickLabel}></CenteredGrid>
-        <p className="App-intro">{this.state.apiResponse}</p>
+       {/* <p className="App-intro">{this.state.apiResponse}</p>
+        <button id="undo" onClick={this.handleUndo}>Undo</button>
+        <button id="redo" onClick={this.handleRedo}>Redo</button>*/}
         <Footer></Footer> 
       </div>
     )

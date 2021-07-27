@@ -18,11 +18,11 @@ export default class Tableau extends Component {
 		nodes:[], 
     relations:[],
     changes:[],
+    select:false,
 	} 
   
   componentDidMount(){
     PubSub.subscribe('MY TOPIC',(_,stateObj)=>{
-      
       if (typeof(stateObj.nodes) !="undefined"){ // react cycle de vie + axios
         this.setState({isRalation:"false"});
         this.setState({nodes:stateObj.nodes});
@@ -30,9 +30,7 @@ export default class Tableau extends Component {
         this.setState({changes:stateObj.changes});
         //var arry = Array.from(stateObj.nodes);
         this.setState({length:stateObj.nodes.length});
-
-      } } 
-    );
+      } } );
   
     PubSub.subscribe('EDGE',(_,stateObj)=>{
       if (typeof(stateObj.label) !="undefined"){
@@ -58,6 +56,8 @@ export default class Tableau extends Component {
   handleClick=(msgList)=> {
 
     this.publishmsg(msgList);
+    // change the color
+    this.setState({select:true})
   }
 
    renderRow=(props)=> {
@@ -65,7 +65,7 @@ export default class Tableau extends Component {
   
     return (
       
-      <ListItem button style={style} key={index} onClick={this.state.isRalation==="false"?()=> this.handleClick([this.state.isRalation,this.state.labelSource,this.state.nodes[index]]) :()=> this.handleClick([this.state.isRalation,this.state.labelSource,this.state.nodes[index],this.state.labelTarget,this.state.relations[index].source,this.state.relations[index].target,this.state.label]) }>
+      <ListItem selected={this.state.select} button style={style} key={index} onClick={this.state.isRalation==="false"?()=> this.handleClick([this.state.isRalation,this.state.labelSource,this.state.nodes[index-1]]) :()=> this.handleClick([this.state.isRalation,this.state.labelSource,this.state.nodes[index-1],this.state.labelTarget,this.state.relations[index-1].source,this.state.relations[index-1].target,this.state.label])}>
       {/* {this.state.isRalation==="false"?index === 0 ? <ListItemText primary={`${this.state.labelSource} id  (nbChange) :`} /> : <ListItemText primary={`---${this.state.labelSource} ${this.state.nodes[index]} ${this.state.changes[index]-1}  `} />:index === 0 ? <ListItemText primary={`${this.state.labelSource} id -->${this.state.labelTarget} id  (nbChange):`} /> : <ListItemText primary={`---${this.state.labelSource} ${this.state.relations[index].source}-->${this.state.labelTarget} ${this.state.relations[index].target} ${this.state.changes[index]-1}`} />}*/}
        {this.state.isRalation==="false"?index === 0 ? <ListItemText primary={`${this.state.labelSource} id   :`} /> : <ListItemText primary={`---${this.state.labelSource} ${this.state.nodes[index-1]}  `} />:index === 0 ? <ListItemText primary={`${this.state.labelSource} id -->${this.state.labelTarget} id  :`} /> : <ListItemText primary={`---${this.state.labelSource} ${this.state.relations[index-1].source}-->${this.state.labelTarget} ${this.state.relations[index-1].target}`} />}
      
@@ -76,7 +76,7 @@ export default class Tableau extends Component {
   render() {
     return (
          <div>
-      <FixedSizeList  className="root" height={500} width={300} itemSize={35} itemCount={this.state.length}>
+      <FixedSizeList  className="root" height={480} width={300} itemSize={35} itemCount={this.state.length}>
         {this.renderRow}
       </FixedSizeList>
     </div>

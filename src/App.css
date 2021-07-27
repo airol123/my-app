@@ -28,6 +28,11 @@
   color: #61dafb;
 }
 
+.btnFix{
+  position: fixed;
+    bottom: 40px;
+    right: 100px;
+}
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
