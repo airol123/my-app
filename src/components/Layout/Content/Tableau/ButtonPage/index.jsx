@@ -25,19 +25,20 @@ const useStyles = makeStyles((theme) => ({
     const [availibleF, setAvailibleF] = useState(false);
     const [textInput, setTextInput] = useState("page");
     const{labelSource,label,isRalation}=props;
-    let max=Math.ceil(2002/21)
+    let max=Math.ceil(2002/21) //2002  length of a node or a relationship
  
    
     function  handleClickBack() {
-        setCount(count-1);
+      //console.log("back",count)
+        setCount(parseInt(count)-1);
         clique=true;
 
         }
     
-    function  handleClickForward() { 
+    function  handleClickForward() {
+     // console.log("forward",count) 
       clique=true;
-      console.log("forward",count)
-        setCount(count+1);
+        setCount(parseInt(count)+1);
 
         }
     function availibleBF(){
@@ -61,10 +62,6 @@ const useStyles = makeStyles((theme) => ({
         console.log(ev.trim()=="")
         if(ev.trim()!=""){setCount(e.target.value);
           console.log("count1",e.target.value)}
-        
-          if(ev.trim()===""){
-            console.log("count2")
-          }
 
       }
 
@@ -101,9 +98,8 @@ const useStyles = makeStyles((theme) => ({
     useEffect(() => {
         availibleBF()
         setTextInput(count);
-        console.log(clique)
+        console.log("effect",count)
         if(clique){obtainData();clique=false;}
-        
       });
     return (
         <div style={{padding:'6%'}}>
@@ -113,8 +109,7 @@ const useStyles = makeStyles((theme) => ({
                 <ArrowBackIosIcon />
             </IconButton>  
             <TextField value={count}  margin="normal" onChange={(e)=>onChange(e)} id="outlined-basic" label="page" variant="outlined" style={{width:"8ch"}} size="small" />
-            
-      
+                  
             <IconButton aria-label="forward"  onClick={handleClickForward} disabled={availibleF}>
                 <ArrowForwardIosIcon />
             </IconButton>

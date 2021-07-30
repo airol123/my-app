@@ -6,7 +6,6 @@ import axios from 'axios';
 import React,{ Component } from 'react'
 import PubSub from 'pubsub-js'
 import cloneDeep from "lodash/cloneDeep";
-import { ContactSupportOutlined } from '@material-ui/icons';
 export default class App extends Component {
   constructor(props) {
     super(props);
@@ -14,8 +13,6 @@ export default class App extends Component {
     this.redo=[];
     this.cleundo=true;
     this.cleredo=true;
-    this.combo={};
-    this.stateVirtual={}; 
     //state
     this.state = {
       clickId:"",
@@ -86,10 +83,12 @@ export default class App extends Component {
 
   //publish message
   publishmsgNode=()=>{
+    console.log("app publish")
     PubSub.publish('NODE',this.state.nodeid);
   }
-
+ 
   publishmsgEdge=()=>{
+    console.log("app publish",this.state.edgeid)
     PubSub.publish('EDGE',this.state.edgeid);
   }
   
@@ -156,14 +155,14 @@ export default class App extends Component {
       axios.get(`http://localhost:8080/kaggle/`+stateObj[1].toLowerCase()+`/`+stateObj[2])
       .then(res => {
         this.setState({comboData:res.data});
-       this.combo=res.data;
+
       });
       }
       else if (stateObj[0]==='true'){
        axios.get(`http://localhost:8080/kaggle/edge/`+stateObj[6].toLowerCase()+`/`+stateObj[1].toLowerCase()+'/'+stateObj[4]+'/'+stateObj[3].toLowerCase()+'/'+stateObj[5])
         .then(res => {
           this.setState({comboData:res.data});
-          this.combo=res.data
+
         });
 
       }
@@ -389,7 +388,7 @@ export default class App extends Component {
     this.forceGraph.on('node:drag', (e) => {
       this.refreshDragedNodePosition(e);
     });
-    this.forceGraph.on('node:mousedown', (evt) => {
+    this.forceGraph.on('node:mouseup', (evt) => {
 
       this.saveUndo();
       const { item } = evt;
@@ -412,11 +411,25 @@ export default class App extends Component {
       }
 
 
-      this.getComboData();
+
+      axios.get(`http://localhost:8080/kaggle/combo/`+this.state.clickLabel)
+      .then(res => {
+
+        this.setState({comboData:res.data});
+      })
+      axios.get(`http://localhost:8080/kaggle/node/`+this.state.clickLabel+'/1')
+      .then(res => {
+
+        this.setState({nodeid:res.data},()=>{this.publishmsgNode();});
+    
+        
+      })
+
+      //this.getComboData();
 
     });
 
-    this.forceGraph.on('edge:mousedown', (evt) => {
+    this.forceGraph.on('edge:mouseup', (evt) => {
       this.saveUndo();
       const { item } = evt;
       this.forceGraph.setItemState(item, 'selected', true);
@@ -454,18 +467,17 @@ export default class App extends Component {
          targetlabel="category";
       }
       axios.get(`http://localhost:8080/kaggle/combo/`+this.state.clickLabel+`/`+sourcelabel+`/`+targetlabel)
-      //axios.get(`http://localhost:8080/kaggle/test/view/user/item`)
       .then(res => {
 
         this.setState({comboData:res.data});
-        this.combo=res.data;
+
       })
       axios.get(`http://localhost:8080/kaggle/edge/`+this.state.clickLabel+'/1')
       .then(res => {
 
-        this.setState({edgeid:res.data});
+        this.setState({edgeid:res.data},()=>{ this.publishmsgEdge();});
     
-        this.publishmsgEdge();
+       
       })
     })
 
@@ -542,7 +554,7 @@ export default class App extends Component {
         //console.log(item._cfg.id)
       });
       //obtain the id of instance in the combo
-      this.comboGraph.on('node:mousedown', (evt) => {
+      this.comboGraph.on('node:mouseup', (evt) => {
         const { item } = evt;
         this.comboGraph.setItemState(item, 'selected', true);
         //console.log(item)
@@ -550,7 +562,7 @@ export default class App extends Component {
       });
      
   
-      this.comboGraph.on('edge:mousedown', (evt) => {
+      this.comboGraph.on('edge:mouseup', (evt) => {
         const { item } = evt;
         this.comboGraph.setItemState(item, 'selected', true);
   
@@ -613,7 +625,6 @@ export default class App extends Component {
   async getComboData(){
     let res=await  axios.get(`http://localhost:8080/kaggle/combo/`+this.state.clickLabel)
     this.setState({comboData:res.data})
-    this.stateVirtual=res.data;
 
     let result=await  axios.get(`http://localhost:8080/kaggle/node/`+this.state.clickLabel+'/1')
     this.setState({nodeid:result.data},()=>{this.publishmsgNode();});
@@ -638,13 +649,16 @@ export default class App extends Component {
 
   }
 
-  
+  force=()=>{
+    this.forceUpdate();
+  }
   render() {
     console.log("state",this.state)
     this.activeBtn();
     return ( 
       
       <div className="App">
+        {/* <button onClick={this.force()}></button>*/}
          <UndoButton handlerClick={this.handleUndo} cle={this.cleundo}></UndoButton>
         <RedoButton handlerClick={this.handleRedo} cle={this.cleredo}></RedoButton>
         <Header></Header>
