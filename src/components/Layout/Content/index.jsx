@@ -19,7 +19,7 @@ export default function CenteredGrid() {
   const classes = useStyles();
 
   return (
-    <div className={classes.root}>
+    <div className={classes.root} style={{paddingTop:'6%'}}>
       <Grid container spacing={2}>
         <Grid   item xs={9} >
           <div className="gridcss1 backgroundbord " id='force'></div>

@@ -25,6 +25,7 @@ const useStyles = makeStyles((theme) => ({
     root: {
       background: 'linear-gradient(45deg, #80bdff 30%,#FE6B8B 120%)',
       flexGrow: 1,
+      position: 'fixed',
     },
     menuButton: {
       marginRight: theme.spacing(2),

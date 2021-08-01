@@ -20,24 +20,25 @@ export default function VirtualizedList() {
   const [changes, setChanges] = useState();
   const [select, setSelect] = useState(false);
 
+
  
   function subNode(){   
     PubSub.subscribe('NODE',(_,stateObj)=>{
        if (typeof(stateObj.nodes) !="undefined"){ 
-        console.log("eeeeeee")
-         setIsRalation("false");
+         console.log("eeeeeee")
          setNodes(stateObj.nodes);
+         setIsRalation("false"); 
          setLabelSource(stateObj.label);
          setChanges(stateObj.changes);
          setLength(stateObj.nodes.length+1);
-       } } );
+       } ;    } );
  }
  function subNodePage(){  
        PubSub.subscribe('PAGECHANGENODE',(_,stateObj)=>{
          if (typeof(stateObj.nodes) !="undefined"){ 
-           setIsRalation("false");
            setNodes(stateObj.nodes);
-           setLabel(stateObj.label);
+           setIsRalation("false");   
+           setLabelSource(stateObj.label);
            setChanges(stateObj.changes);
            setLength(stateObj.nodes.length+1);
          } } );
@@ -46,12 +47,9 @@ export default function VirtualizedList() {
  function subEdge(){ 
    
      PubSub.subscribe('EDGE',(_,stateObj)=>{
-       console.log("receive edge",stateObj)
-         
          console.log("eeeeeee")
          setRelations(stateObj.edges);
          setIsRalation("true");
-
          setLabelSource(stateObj.sourceLabel);
          setLabelTarget(stateObj.targetLabel);
          setLabel(stateObj.label);
@@ -62,8 +60,8 @@ export default function VirtualizedList() {
  
  function subEdgePage(){   PubSub.subscribe('PAGECHANGEEDGE',(_,stateObj)=>{
        if (typeof(stateObj.label) !="undefined"){
-         setIsRalation("true");
          setRelations(stateObj.edges);
+         setIsRalation("true");
          setLabelSource(stateObj.sourceLabel);
          setLabelTarget(stateObj.targetLabel);
          setLabel(stateObj.label);
@@ -75,10 +73,10 @@ export default function VirtualizedList() {
   function renderRow(props) {
     const { index, style } = props;
     return (
-      <ListItem selected={select} button style={style} key={index} onClick={isRalation==="false"?()=> handleClick([isRalation,labelSource,nodes[index-1]]) :()=> this.handleClick([isRalation,labelSource,nodes[index-1],labelTarget,relations[index-1].source,relations[index-1].target,label])}>
+      <ListItem selected={select} button style={style} key={index} onClick={isRalation==="false"?()=> handleClick([isRalation,labelSource,nodes[index-1]]) :()=> handleClick([isRalation,labelSource,nodes[index-1],labelTarget,relations[index-1].source,relations[index-1].target,label])}>
            {/*console.log("nodes",nodes)}
            {console.log("relation",relations)*/}
-           {true?isRalation==="false"?index === 0 ? <ListItemText primary={`${labelSource} id   :`} /> : <ListItemText primary={`---${labelSource} ${nodes[index-1]}  `} />:index === 0 ? <ListItemText primary={`${labelSource} id -->${labelTarget} id  :`} /> : <ListItemText primary={`---${labelSource} ${relations[index-1].source}-->${labelTarget} ${relations[index-1].target}`} />:console.log("0000")}
+           {isRalation==="false"?index === 0 ? <ListItemText primary={`${labelSource} id   :`} /> : <ListItemText primary={`---${labelSource} ${nodes[index-1]}  `} />:index === 0 ? <ListItemText primary={`${labelSource} id -->${labelTarget} id  :`} /> : <ListItemText primary={`---${labelSource} ${relations[index-1].source}-->${labelTarget} ${relations[index-1].target}`} />}
       </ListItem>
     );
   }
@@ -94,18 +92,17 @@ export default function VirtualizedList() {
     // change the color
     setSelect(true)
   }
+  function resetCount(){
+
+  }
 
   useEffect(() => {
+
     subNode();
     subNodePage();
     subEdge();
     subEdgePage();
-    console.log("edge",relations)
-    console.log("isRalation",isRalation)
-    console.log("node",nodes)
-    console.log("label",labelSource)
-    console.log("changes",changes)
-    console.log("len",length)
+
 
   });
 

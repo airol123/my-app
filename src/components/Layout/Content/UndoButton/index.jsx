@@ -6,8 +6,8 @@ import UndoIcon from '@material-ui/icons/Undo';
 const useStyles = makeStyles((theme) => ({
   fabUndo: {
     position: 'fixed',
-    bottom: theme.spacing(2),
-    right: theme.spacing(9),
+    top: theme.spacing(9),
+    left: theme.spacing(7),
   },
 
 }));

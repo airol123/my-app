@@ -29,47 +29,74 @@ export default class App extends Component {
             x: 50,
             y: 120,
             label: 'User',
+            style: {
+              fill: '	#A593E0',
+              stroke: '#AAABD3',
+            },
           },
           {
             id: '02',
             x: 400,
             y: 150,
             label: 'Item',
-            type: 'circle'
+            type: 'circle',
+            style: {
+              fill: '#dedcee',
+              stroke: '#CBA6C3',
+            },
           },
           {
             id: '03',
             x: 250,
             y: 100,
             label: 'Category',
+            style: {
+              fill: '#aacfd0',
+              stroke: '#aacfd0',
+            },
           },
         ],
         edges: [{
           source: '01',
           target: '02',
           label: 'addtocart',
+          style: {
+            stroke: '#FFEEE4',
+          },
         },
         {
           source: '02',
           target: '03',
           label: 'belongto',
+          style: {
+            stroke: '#FBFFB9',
+          },
         },
         {
           source: '03',
           target: '03',
           label: 'subCategory',
-          type: 'loop'
+          type: 'loop',
+          style: {
+            stroke: '#AAABD3',
+          },
         }
           ,
         {
           source: '01',
           target: '02',
           label: 'view',
+          style: {
+            stroke: '#ABD0CE',
+          },
         },
         {
           source: '01',
           target: '02',
           label: 'transaction',
+          style: {
+            stroke: '#8EC0E4',
+          },
         }
         ],
 
@@ -112,24 +139,15 @@ export default class App extends Component {
     this.setState({clickId:this.undo[0].clickId,
       isNode:this.undo[0].isNode,
       clickLabel:this.undo[0].clickLabel,
-
       comboData: this.undo[0].comboData,
-      
       nodeid:this.undo[0].nodeid,
       edgeid:this.undo[0].edgeid,},
-      ()=>{
-         this.publishmsgNode();
-         this.publishmsgEdge();
-         }
     );
   this.undo.splice(0,1);
   //
-
-
   }
 
   handleRedo=(e)=> {
-
     e.preventDefault();
     this.saveUndo();
     this.setState({clickId:this.redo[0].clickId,
@@ -137,10 +155,8 @@ export default class App extends Component {
       clickLabel:this.redo[0].clickLabel,
       comboData: this.redo[0].comboData,
       nodeid:this.redo[0].nodeid,
-      edgeid:this.redo[0].edgeid,},()=>{
-         this.publishmsgNode();
-         this.publishmsgEdge();
-  });
+      edgeid:this.redo[0].edgeid,},
+      );
   this.redo.splice(0,1);
   //
   
@@ -324,7 +340,7 @@ export default class App extends Component {
           // <img src="https://s3.jpg.cm/2021/06/21/IRQKPL.png" alt="node evolution" border="0">
           //img: 'https://i.loli.net/2021/06/21/2Wtydn6vSBHQuqX.png'
           style: {
-            // fill: '#steelblue',
+             fill: 'green',
             //stroke: 'red',
             //lineDash: [2, 2],
             lineWidth: 0.5,
@@ -658,10 +674,10 @@ export default class App extends Component {
     return ( 
       
       <div className="App">
-        {/* <button onClick={this.force()}></button>*/}
+        {/* <button onClick={this.force()}></button>*/}<Header></Header>
          <UndoButton handlerClick={this.handleUndo} cle={this.cleundo}></UndoButton>
         <RedoButton handlerClick={this.handleRedo} cle={this.cleredo}></RedoButton>
-        <Header></Header>
+        
         
         <CenteredGrid clickId={this.state.clickId} clickLabel={this.state.clickLabel}></CenteredGrid>
        {/* <p className="App-intro">{this.state.apiResponse}</p>

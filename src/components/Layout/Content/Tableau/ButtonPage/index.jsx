@@ -19,6 +19,9 @@ const useStyles = makeStyles((theme) => ({
   }));
   let clique=false;
   export default function Btn(props) {
+
+    const [labelSourceRecord,setLabelSourceRecord]=useState();
+    const [labelRecord,setLabelRecord]=useState();
     const classes = useStyles();
     const [count, setCount] = useState(1);
     const [availibleB, setAvailibleB] = useState(true);
@@ -27,6 +30,16 @@ const useStyles = makeStyles((theme) => ({
     const{labelSource,label,isRalation}=props;
     let max=Math.ceil(2002/21) //2002  length of a node or a relationship
  
+    function saveRecord(){
+      setLabelSourceRecord(labelSource);
+      setLabelRecord(label);
+    }
+
+    function initialiseCount(){
+      if(labelSource!==labelSourceRecord||label!==labelRecord){
+        setCount(1);
+      }
+    }
    
     function  handleClickBack() {
       //console.log("back",count)
@@ -36,10 +49,9 @@ const useStyles = makeStyles((theme) => ({
         }
     
     function  handleClickForward() {
-     // console.log("forward",count) 
+
       clique=true;
         setCount(parseInt(count)+1);
-
         }
     function availibleBF(){
         if (count>1)
@@ -59,17 +71,14 @@ const useStyles = makeStyles((theme) => ({
       clique=true;
         //setTextInput(e.target.value);
         const ev=e.target.value
-        console.log(ev.trim()=="")
-        if(ev.trim()!=""){setCount(e.target.value);
+        console.log(ev.trim()==="")
+        if(ev.trim()!==""){setCount(e.target.value);
           console.log("count1",e.target.value)}
 
       }
 
     function obtainData(){
-        console.log(count)
-        console.log(isRalation)
-        console.log(labelSource)
-
+        if (labelSource)
         if(isRalation==="true"){
           axios.get(`http://localhost:8080/kaggle/edge/`+label+'/'+count)
           .then(res => {
@@ -96,11 +105,15 @@ const useStyles = makeStyles((theme) => ({
 
 
     useEffect(() => {
+        initialiseCount();
         availibleBF()
         setTextInput(count);
         console.log("effect",count)
         if(clique){obtainData();clique=false;}
-      });
+        saveRecord();
+    }
+      );
+
     return (
         <div style={{padding:'6%'}}>
            <div  className={classes.root} noValidate autoComplete="off" >     
