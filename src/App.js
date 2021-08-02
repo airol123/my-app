@@ -13,6 +13,11 @@ export default class App extends Component {
     this.redo=[];
     this.cleundo=true;
     this.cleredo=true;
+    this.idSelected="";
+    this.isNode=false;
+    this.isCombo=false;
+    this.isEdge=false;
+    this.comboDataVir={};
     //state
     this.state = {
       clickId:"",
@@ -30,8 +35,8 @@ export default class App extends Component {
             y: 120,
             label: 'User',
             style: {
-              fill: '	#A593E0',
-              stroke: '#AAABD3',
+              fill: '	#87CEFF',
+              stroke: '#87CEFF',
             },
           },
           {
@@ -69,7 +74,7 @@ export default class App extends Component {
           target: '03',
           label: 'belongto',
           style: {
-            stroke: '#FBFFB9',
+            stroke: '#CFCFCF',
           },
         },
         {
@@ -101,8 +106,6 @@ export default class App extends Component {
         ],
 
       },
-      test:"",
-
     };
     this.comboGraph = null;
     this.forceGraph = null;
@@ -113,12 +116,10 @@ export default class App extends Component {
     console.log("app publish")
     PubSub.publish('NODE',this.state.nodeid);
   }
- 
   publishmsgEdge=()=>{
     console.log("app publish",this.state.edgeid)
     PubSub.publish('EDGE',this.state.edgeid);
   }
-  
 
   // callAPI() {
   //   fetch("http://localhost:9000/testAPI")
@@ -144,7 +145,6 @@ export default class App extends Component {
       edgeid:this.undo[0].edgeid,},
     );
   this.undo.splice(0,1);
-  //
   }
 
   handleRedo=(e)=> {
@@ -158,9 +158,6 @@ export default class App extends Component {
       edgeid:this.redo[0].edgeid,},
       );
   this.redo.splice(0,1);
-  //
-  
-   
   }
 
   componentDidMount() {
@@ -175,16 +172,12 @@ export default class App extends Component {
       });
       }
       else if (stateObj[0]==='true'){
-       axios.get(`http://localhost:8080/kaggle/edge/`+stateObj[6].toLowerCase()+`/`+stateObj[1].toLowerCase()+'/'+stateObj[4]+'/'+stateObj[3].toLowerCase()+'/'+stateObj[5])
+       axios.get(`http://localhost:8080/kaggle/edge/`+stateObj[5].toLowerCase()+`/`+stateObj[1].toLowerCase()+'/'+stateObj[3]+'/'+stateObj[2].toLowerCase()+'/'+stateObj[4])
         .then(res => {
           this.setState({comboData:res.data});
-
+          //this.comboDataVir.cloneDeep(this.state.comboData)
         });
-
       }
-
-
-
 		} );
 
    // this.callAPI();
@@ -405,9 +398,16 @@ export default class App extends Component {
       this.refreshDragedNodePosition(e);
     });
     this.forceGraph.on('node:mouseup', (evt) => {
-
+      console.log("node mouseup")
       this.saveUndo();
+
       const { item } = evt;
+      this.forceGraph.getNodes().forEach((item) => {
+        this.forceGraph.clearItemStates(item);
+      });
+      this.forceGraph.getEdges().forEach((item) => {
+        this.forceGraph.clearItemStates(item);
+      });
       this.forceGraph.setItemState(item, 'selected', true);
       //console.log(item._cfg.id);
       //this.setState({isNode:true});
@@ -427,10 +427,8 @@ export default class App extends Component {
       }
 
 
-
       axios.get(`http://localhost:8080/kaggle/combo/`+this.state.clickLabel)
       .then(res => {
-
         this.setState({comboData:res.data});
       })
       axios.get(`http://localhost:8080/kaggle/node/`+this.state.clickLabel+'/1')
@@ -440,14 +438,19 @@ export default class App extends Component {
     
         
       })
-
       //this.getComboData();
-
     });
 
     this.forceGraph.on('edge:mouseup', (evt) => {
       this.saveUndo();
       const { item } = evt;
+      this.forceGraph.getNodes().forEach((item) => {
+        this.forceGraph.clearItemStates(item);
+      });
+
+      this.forceGraph.getEdges().forEach((item) => {
+        this.forceGraph.clearItemStates(item);
+      });
       this.forceGraph.setItemState(item, 'selected', true);
       //console.log(item._cfg);
       //console.log(item._cfg.model.label)
@@ -484,20 +487,16 @@ export default class App extends Component {
       }
       axios.get(`http://localhost:8080/kaggle/combo/`+this.state.clickLabel+`/`+sourcelabel+`/`+targetlabel)
       .then(res => {
-
         this.setState({comboData:res.data});
-
       })
       axios.get(`http://localhost:8080/kaggle/edge/`+this.state.clickLabel+'/1')
       .then(res => {
-
         this.setState({edgeid:res.data},()=>{ this.publishmsgEdge();});
-    
-       
       })
     })
 
     this.forceGraph.on('canvas:click', (evt) => {
+
       this.forceGraph.getNodes().forEach((item) => {
         this.forceGraph.clearItemStates(item);
       });
@@ -505,7 +504,6 @@ export default class App extends Component {
       this.forceGraph.getEdges().forEach((item) => {
         this.forceGraph.clearItemStates(item);
       });
-
     })
 
      //combo graph
@@ -550,8 +548,8 @@ export default class App extends Component {
         },
       });
      
-      this.comboGraph.data(this.state.comboData);
-  
+      this.comboGraph.data(this.state.comboData); 
+     // this.comboGraph.data(this.comboDataVir);
       this.comboGraph.render();
       this.comboGraph.on('combo:mouseenter', (evt) => {
         const { item } = evt;
@@ -565,25 +563,37 @@ export default class App extends Component {
       // obtain the id of combo
       this.comboGraph.on('combo:click', (evt) => {
         const { item } = evt;
+        this.isCombo=true;
+        this.isEdge=false;
+        this.isNode=false;
+        console.log("item",item._cfg.id)
+        this.idSelected=item._cfg.id;
+        console.log("item",this.idSelected)
         this.comboGraph.setItemState(item, 'selected', true);
-        //console.log(item)
         //console.log(item._cfg.id)
       });
       //obtain the id of instance in the combo
       this.comboGraph.on('node:mouseup', (evt) => {
         const { item } = evt;
-        this.comboGraph.setItemState(item, 'selected', true);
-        //console.log(item)
-        //console.log(item._cfg.id)
+        this.isCombo=false;
+        this.isEdge=false;
+        this.isNode=true;
+        console.log("item",item)
+        //this.setState({idSelected:item._cfg.id});    
+        this.idSelected=item._cfg.id;
+        this.comboGraph.setItemState(item, 'selected', true);     
       });
      
-  
       this.comboGraph.on('edge:mouseup', (evt) => {
         const { item } = evt;
+        this.isEdge=true;
+        this.isNode=false;
+        this.isCombo=false;
+        this.idSelected=item._cfg.id;
         this.comboGraph.setItemState(item, 'selected', true);
   
       })
-  
+
       this.comboGraph.on('canvas:click', (evt) => {
         this.comboGraph.getCombos().forEach((combo) => {
           this.comboGraph.clearItemStates(combo);
@@ -596,58 +606,43 @@ export default class App extends Component {
         });
   
       })
-
   }
 
   activeBtn=()=>{
  if(this.redo.length===0){
-       this.cleredo=true;
-    }
+       this.cleredo=true;}
  if (this.undo.length===1){
-       this.cleundo=true;
-       }
+       this.cleundo=true;}
   if(this.undo.length>1){
-      this.cleundo=false;
-    }
+      this.cleundo=false;}
     if(this.redo.length>=1){
       this.cleredo=false;}
   }
 
-
   componentDidUpdate(){
-
-    
     console.log("change data");
-    if (typeof(this.state.comboData.edges)!='undefined'){ 
+    if (typeof(this.state.comboData.edges)!='undefined'){  
+   // if (typeof(this.comboDataVir.edges)!='undefined'){ 
       console.log("util process parallel ")
-           G6.Util.processParallelEdges(this.state.comboData.edges);};
+      G6.Util.processParallelEdges(this.state.comboData.edges);}; 
+      // G6.Util.processParallelEdges(this.comboDataVir.edges);};
+
    (this.state.isNode===true)? this.comboGraph.updateLayout({type: 'comboForce', nodeSpacing: (d) => 8,
    preventOverlap:true,
    preventComboOverlap:true,},):this.comboGraph.updateLayout({type: 'random',
    preventOverlap: true,
   },)
-    this.comboGraph.changeData(this.state.comboData);
-  }
+    
+  this.comboGraph.changeData(this.state.comboData);
+  //this.comboGraph.changeData(this.comboDataVir);
+  
+}
 //fruchterman
-
   refreshDragedNodePosition(e) {
     const model = e.item.get('model');
     model.fx = e.x;
     model.fy = e.y;
   };
-
-
-
-  async getComboData(){
-    let res=await  axios.get(`http://localhost:8080/kaggle/combo/`+this.state.clickLabel)
-    this.setState({comboData:res.data})
-
-    let result=await  axios.get(`http://localhost:8080/kaggle/node/`+this.state.clickLabel+'/1')
-    this.setState({nodeid:result.data},()=>{this.publishmsgNode();});
-
-
-  }
-
   saveUndo=()=>{
     //console.log("statu actuel",this.state)
     //console.log("before save undo", this.undo)
@@ -656,8 +651,6 @@ export default class App extends Component {
     this.undo.unshift(deepState);
     //console.log("after save undo", this.undo)
   }
-
-
   saveRedo=()=>{
     
     let deepState = cloneDeep(this.state)
@@ -665,24 +658,102 @@ export default class App extends Component {
 
   }
 
-  force=()=>{
-    this.forceUpdate();
+  contains(nodes, obj) { 
+    var i = nodes.length; 
+    while (i--) { 
+      if (nodes[i].id === obj) { 
+        return i; 
+      } 
+    } 
+    return false; 
   }
+  sortNumber(a, b){return a - b}
+  
+  containsComboInNodes(nodes, obj) { 
+    var i = nodes.length; 
+    var list=[];
+    while (i--) { 
+      if (nodes[i].comboId === obj) { 
+         list.push(i); 
+      } 
+    } 
+    list=list.sort(this.sortNumber);
+    return list; 
+  }
+
+
+
+  handleDelete(){
+
+    
+    let deepState = cloneDeep(this.state.comboData)
+
+    console.log(deepState)
+    if (this.isNode){
+      const node = this.comboGraph.findById(this.idSelected);
+      // 找到对应的边 删除边
+        const edges = node.getEdges();
+        if (edges.length!==0){
+          edges.forEach(edge => {
+            console.log(edge);
+            let idEdge=this.contains(deepState.edges,edge._cfg.id)
+            deepState.edges.splice(idEdge,1)
+          });
+        }
+        let id=this.contains(deepState.nodes,this.idSelected)
+        deepState.nodes.splice(id,1)
+        this.setState({comboData:deepState},()=>{    console.log(this.state.comboData);}) 
+    }else if(this.isCombo){
+      //all the nodes of the selected combo
+      const combo = this.comboGraph.findById(this.idSelected);
+      const nodesInCombo= combo.getNodes()
+      console.log(nodesInCombo)
+      //找到所有的边 并删除
+      let edgesRelevent=[];
+      let idsInNodes=this.containsComboInNodes(deepState.nodes,this.idSelected);
+      console.log(idsInNodes);
+      nodesInCombo.forEach(idNode => {
+        const node = this.comboGraph.findById(idNode._cfg.id);
+        const edges = node.getEdges();
+        edgesRelevent=edgesRelevent.concat(edges);
+      });
+
+        if (edgesRelevent.length!==0){
+          edgesRelevent.forEach(edge => {
+            console.log(edge);
+            let idEdge=this.contains(deepState.edges,edge._cfg.id)
+            deepState.edges.splice(idEdge,1)
+          });
+        }
+      var total=0;
+      // condition : reponse order by itemid
+      idsInNodes.forEach(id => {
+        deepState.nodes.splice(id-total,1);
+        total++;        
+      }); 
+      let idCombo=this.contains(deepState.combos,this.idSelected);
+      deepState.combos.splice(idCombo,1);
+      this.setState({comboData:deepState},()=>{console.log(this.state.comboData);})
+    }else if(this.isEdge){
+      let idEdge=this.contains(deepState.edges,this.idSelected)
+      deepState.edges.splice(idEdge,1)
+      this.setState({comboData:deepState}) 
+    }
+  }
+
   render() {
     console.log("state",this.state)
     this.activeBtn();
     return ( 
-      
       <div className="App">
         {/* <button onClick={this.force()}></button>*/}<Header></Header>
          <UndoButton handlerClick={this.handleUndo} cle={this.cleundo}></UndoButton>
         <RedoButton handlerClick={this.handleRedo} cle={this.cleredo}></RedoButton>
-        
-        
         <CenteredGrid clickId={this.state.clickId} clickLabel={this.state.clickLabel}></CenteredGrid>
        {/* <p className="App-intro">{this.state.apiResponse}</p>
         <button id="undo" onClick={this.handleUndo}>Undo</button>
         <button id="redo" onClick={this.handleRedo}>Redo</button>*/}
+        <button style={{position:'fixed',top:'13%',left:'0.1%'} } onClick={()=>this.handleDelete()} >delete</button>
         <Footer></Footer> 
       </div>
     )

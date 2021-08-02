@@ -7,7 +7,6 @@ import React, { useState,useEffect } from 'react'
 import Btn from './ButtonPage/index.jsx'
 
 
-
 export default function VirtualizedList() {
 
   const [labelSource, setLabelSource] = useState("");
@@ -19,13 +18,17 @@ export default function VirtualizedList() {
   const [relations, setRelations] = useState();
   const [changes, setChanges] = useState();
   const [select, setSelect] = useState(false);
-
-
+  const [selectedIndex, setSelectedIndex] = useState();
  
+
+  const handleListItemClick = (event, index) => {
+    setSelectedIndex(index);
+  };
+
+
   function subNode(){   
     PubSub.subscribe('NODE',(_,stateObj)=>{
        if (typeof(stateObj.nodes) !="undefined"){ 
-         console.log("eeeeeee")
          setNodes(stateObj.nodes);
          setIsRalation("false"); 
          setLabelSource(stateObj.label);
@@ -47,7 +50,6 @@ export default function VirtualizedList() {
  function subEdge(){ 
    
      PubSub.subscribe('EDGE',(_,stateObj)=>{
-         console.log("eeeeeee")
          setRelations(stateObj.edges);
          setIsRalation("true");
          setLabelSource(stateObj.sourceLabel);
@@ -69,14 +71,20 @@ export default function VirtualizedList() {
  
        } } 
      );}
+
+function handleTransProps(index) {
+  isRalation==="false"?handleClick([isRalation,labelSource,nodes[index-1]]) :handleClick([isRalation,labelSource,labelTarget,relations[index-1].source,relations[index-1].target,label])
+
+}
   
   function renderRow(props) {
     const { index, style } = props;
+
     return (
-      <ListItem selected={select} button style={style} key={index} onClick={isRalation==="false"?()=> handleClick([isRalation,labelSource,nodes[index-1]]) :()=> handleClick([isRalation,labelSource,nodes[index-1],labelTarget,relations[index-1].source,relations[index-1].target,label])}>
+      <ListItem selected={selectedIndex === index} button style={style} key={index} onClick={(event)=>{handleListItemClick(event,index);handleTransProps(index)}}>
            {/*console.log("nodes",nodes)}
            {console.log("relation",relations)*/}
-           {isRalation==="false"?index === 0 ? <ListItemText primary={`${labelSource} id   :`} /> : <ListItemText primary={`---${labelSource} ${nodes[index-1]}  `} />:index === 0 ? <ListItemText primary={`${labelSource} id -->${labelTarget} id  :`} /> : <ListItemText primary={`---${labelSource} ${relations[index-1].source}-->${labelTarget} ${relations[index-1].target}`} />}
+           {isRalation==="false"?index === 0 ? (<ListItemText primary={`${labelSource} id   :`} /> ) : <ListItemText primary={`---${labelSource} ${nodes[index-1]}  `} />:index === 0 ? <ListItemText primary={`${labelSource} id -->${labelTarget} id  :`} /> : <ListItemText primary={`---${labelSource} ${relations[index-1].source}-->${labelTarget} ${relations[index-1].target}`} />}
       </ListItem>
     );
   }
@@ -92,18 +100,12 @@ export default function VirtualizedList() {
     // change the color
     setSelect(true)
   }
-  function resetCount(){
-
-  }
 
   useEffect(() => {
-
     subNode();
     subNodePage();
     subEdge();
     subEdgePage();
-
-
   });
 
   return (
