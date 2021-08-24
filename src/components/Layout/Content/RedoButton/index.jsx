@@ -2,12 +2,11 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Fab from '@material-ui/core/Fab';
-import UndoIcon from '@material-ui/icons/Undo';
 import RedoIcon from '@material-ui/icons/Redo';
 const useStyles = makeStyles((theme) => ({
   fabRedo: {
     position: 'fixed',
-    top: theme.spacing(9),
+    bottom: theme.spacing(9),
     left: theme.spacing(13),
    
   },
