@@ -41,3 +41,15 @@
     transform: rotate(360deg);
   }
 }
+
+  .btnInMenu:hover {
+    color: #aaa;
+  }
+  .btnInMenu{
+    border-width:0px;
+    background:transparent;
+
+  }
+  .serif{font-family:"Arial";
+    margin: 0;}
+;

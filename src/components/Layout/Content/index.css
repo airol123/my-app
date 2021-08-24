@@ -3,22 +3,55 @@
 .divcss5{height:500px; width: 600px;float: left;text-align:justify; border:2px inset rgb(219, 23, 23);margin:0 auto;}
 
 /*style for grid*/
-.gridcss1{ background-color:rgba(255, 255, 255, 0.699); height: 500px;  } 
-.gridcss2{ background-color:rgba(255, 255, 255, 0.534);  height: 500px; } 
-.gridcss3{ background-color:rgba(255, 255, 255, 0.678);  } 
-
+.gridcss1{ background-color:rgb(255, 255, 255); height: 100%;  } 
+.gridcss2{ background-color:rgba(255, 255, 255);  height: 100%; } 
+.gridcss3{ background-color:rgba(255, 255, 255); height:500px; } 
+.gridcss4{ background-color:rgba(255, 255, 255, 1);  } 
+.gridpath{ height: 20%; width: 99% ; position:absolute;bottom:5px;left: 0.5%; } 
+.gridtimebar{ background-color:rgba(255, 255, 255, 1); height:200px; } 
+.detail{position: absolute;float: right; height: 500px; width: 25%; left: 75%;} 
 .backgroundbord{
     color: rgba(255, 255, 255, 0.623);
     border: 1px solid;
     border-radius: 10px;
-    padding-top: 10px;
+    padding-top: 5px;
     padding-bottom: 10px;
 
 }
+.box{  font-family: Arial;
+    font-size: 18px;
+    line-height: 30px;
+    font-weight: bold;
+    color: rgb(46, 48, 42);
+    border-radius: 10px;
+    background-size: 100% 37px;
+    overflow-y:hidden ;
+   overflow-x:auto ;/*background: linear-gradient(#E65868 95%, #eee 0); 
+  background-color:#6F9B3A */
+    }
+
+.pathhover:hover {
+    animation: linearGradientMove .3s infinite linear;
+}
+
+@keyframes linearGradientMove {
+    100% {
+        background-position: 4px 0, -4px 100%, 0 -4px, 100% 4px;
+    }
+}
+
+
+
+
 /*style for font*/
 .listfont{
-    -webkit-text-fill-color: #3d3b3b;
+    -webkit-text-fill-color: #353333;
     /*-webkit-text-stroke: 1.2px rgb(255, 255, 255);*/
 
+}
+
+.datecss{
+    padding-top: 5px;
+    
 }
 
