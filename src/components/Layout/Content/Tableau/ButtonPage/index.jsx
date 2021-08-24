@@ -78,8 +78,9 @@ const useStyles = makeStyles((theme) => ({
       }
 
     function obtainData(){
-        if (labelSource)
+
         if(isRalation==="true"){
+          
           axios.get(`http://localhost:8080/kaggle/edge/`+label+'/'+count)
           .then(res => {
             console.log(res.data);
@@ -96,10 +97,12 @@ const useStyles = makeStyles((theme) => ({
    
       }
     function publishNode(msgList){
+      console.log(msgList)
         PubSub.publish('PAGECHANGENODE',msgList);
       }
 
     function publishEdge(msgList){
+      console.log(msgList)
       PubSub.publish('PAGECHANGEEDGE',msgList);
     }
 
@@ -115,7 +118,7 @@ const useStyles = makeStyles((theme) => ({
       );
 
     return (
-        <div style={{padding:'6%'}}>
+        <div style={{padding:'10%'}}>
            <div  className={classes.root} noValidate autoComplete="off" >     
             
             <IconButton aria-label="back" onClick={handleClickBack} disabled={availibleB}>

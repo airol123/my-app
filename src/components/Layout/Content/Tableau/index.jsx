@@ -28,6 +28,7 @@ export default function VirtualizedList() {
 
   function subNode(){   
     PubSub.subscribe('NODE',(_,stateObj)=>{
+      console.log("sub",stateObj)
        if (typeof(stateObj.nodes) !="undefined"){ 
          setNodes(stateObj.nodes);
          setIsRalation("false"); 
@@ -82,8 +83,8 @@ function handleTransProps(index) {
 
     return (
       <ListItem selected={selectedIndex === index} button style={style} key={index} onClick={(event)=>{handleListItemClick(event,index);handleTransProps(index)}}>
-           {/*console.log("nodes",nodes)}
-           {console.log("relation",relations)*/}
+           {/*console.log("nodes",nodes)*/}
+           
            {isRalation==="false"?index === 0 ? (<ListItemText primary={`${labelSource} id   :`} /> ) : <ListItemText primary={`---${labelSource} ${nodes[index-1]}  `} />:index === 0 ? <ListItemText primary={`${labelSource} id -->${labelTarget} id  :`} /> : <ListItemText primary={`---${labelSource} ${relations[index-1].source}-->${labelTarget} ${relations[index-1].target}`} />}
       </ListItem>
     );
@@ -111,7 +112,7 @@ function handleTransProps(index) {
   return (
     
        <div>
-    <FixedSizeList  className="root" height={410} width={300} itemSize={35} itemCount={length}>
+    <FixedSizeList  className="root" height={410} width={'100%'} itemSize={35} itemCount={length}>
       {renderRow}
       
     </FixedSizeList>
@@ -122,13 +123,6 @@ function handleTransProps(index) {
   )
   
 }
-
-
-
-
- 
-  
-  
 
 
 
