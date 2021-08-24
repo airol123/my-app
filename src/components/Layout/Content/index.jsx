@@ -1,8 +1,10 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import Tableau from './Tableau'
+import Detail from './Detail/index.jsx'
+import Timebar from './Timebar';
+import ChangeCombo from './ChangeCombo/index.jsx'
 import './index.css'
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -19,22 +21,26 @@ export default function CenteredGrid() {
   const classes = useStyles();
 
   return (
-    <div className={classes.root} style={{paddingTop:'6%'}}>
-      <Grid container spacing={2}>
-        <Grid   item xs={9} >
-          <div className="gridcss1 backgroundbord " id='force'></div>
+    <div className={classes.root} style={{ paddingTop: '4%' }}>
+      <Grid container spacing={1}>
+        <Grid item xs={9} style={{ position: 'relative' }}>
+          <div className="gridcss1 backgroundbord  " id='force'></div>
+          <div className="gridpath box  " id='path'></div>
+          <ChangeCombo />
         </Grid>
-        <Grid   item xs={3} >
+
+        <Grid item xs={3} >
           <div className="gridcss2 backgroundbord listfont"><Tableau ></Tableau></div>
         </Grid>
-        <Grid  item xs={12} >
-         <div id='comboGroup' className="gridcss3 backgroundbord"> 
-         <div  id='combo' ></div>
+        <Grid item xs={12} >
+          <div id='comboCompo'>
+            <div className="detail gridcss4" ><Detail></Detail></div>
+            <div id='combo' className="gridcss3 backgroundbord"></div>
 
-         </div>
+          </div>
         </Grid>
-        <Grid item xs={6}>
-          <Paper className={classes.paper}>timebar</Paper>
+        <Grid item xs={12}>
+          <div className="gridtimebar backgroundbord" ><Timebar /></div>
         </Grid>
 
 
