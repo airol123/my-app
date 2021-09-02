@@ -6,7 +6,7 @@ import RedoIcon from '@material-ui/icons/Redo';
 const useStyles = makeStyles((theme) => ({
   fabRedo: {
     position: 'fixed',
-    bottom: theme.spacing(9),
+    top: theme.spacing(9),
     left: theme.spacing(13),
    
   },
