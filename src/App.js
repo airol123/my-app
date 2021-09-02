@@ -6,6 +6,7 @@ import axios from 'axios';
 import React, { Component } from 'react'
 import PubSub from 'pubsub-js'
 import cloneDeep from "lodash/cloneDeep";
+import Drawer from './components/TemporaryDrawer/index.jsx'
 
 export default class App extends Component {
   constructor(props) {
@@ -22,13 +23,19 @@ export default class App extends Component {
     this.future = [];
     this.current = "";
     this.comboDataVir = {};
+    this.nodeClickedPath = [];
     //state
     this.state = {
+      indexEtat:"0",
       clickId: "",
       isNode: true,
       clickLabel: "",
       starttime: "",
       endtime: "",
+      record: "waiting for work ヾ(￣▽￣)",
+      labelHistory: "____",
+      changesInfo:[{disappear:[],appear:[],valuechange:[],validtime:[]},
+        {disappear:[],appear:[],valuechange:[],validtime:[]}],
       comboData: {
       },
       nodeid: {},
@@ -113,12 +120,152 @@ export default class App extends Component {
 
       },
       pathDate: { nodes: [], edges: [] },
+      historyData: {
+        "nodes":[
+          {
+              "id": "1022750",
+              "label": "1009690",
+              "size": "80",
+              "x": "0",
+              "y": "5"
+          },
+          {
+              "id": "1022751",
+              "label": "1009691",
+              "size": "80",
+              "degree": "360",
+              "type": "demi-node",
+              "x": "90",
+              "y": "5",
+              "color1": "#7FFF00",
+              "color2": "#FFB90F",
+              "style": {
+                  "fill": "#FFFFFF"
+              }
+          },
+          {
+              "id": "1022752",
+              "label": "1009692",
+              "size": "80",
+              "degree": "360",
+              "type": "demi-node",
+              "x": "180",
+              "y": "5",
+              "color1": "#7FFF00",
+              "color2": "#FFB90F",
+              "style": {
+                  "fill": "#FFFFFF"
+              }
+          },
+          {
+              "id": "1022753",
+              "label": "1009693",
+              "size": "80",
+              "degree": "360",
+              "type": "demi-node",
+              "x": "270",
+              "y": "5",
+              "color1": "#7FFF00",
+              "color2": "#FFB90F",
+              "style": {
+                  "fill": "#FFFFFF"
+              }
+          },
+          {
+              "id": "1022754",
+              "label": "1009694",
+              "size": "80",
+              "degree": "360",
+              "type": "demi-node",
+              "x": "360",
+              "y": "5",
+              "color1": "#7FFF00",
+              "color2": "#FFB90F",
+              "style": {
+                  "fill": "#FFFFFF"
+              }
+          },
+          {
+              "id": "1022755",
+              "label": "1009695",
+              "size": "80",
+              "degree": "360",
+              "type": "demi-node",
+              "x": "450",
+              "y": "5",
+              "color1": "#7FFF00",
+              "color2": "#FFB90F",
+              "style": {
+                  "fill": "#FFFFFF"
+              }
+          },
+          {
+              "id": "1022756",
+              "label": "1009696",
+              "size": "80",
+              "degree": "360",
+              "type": "demi-node",
+              "x": "540",
+              "y": "5",
+              "color1": "#7FFF00",
+              "color2": "#FFB90F",
+              "style": {
+                  "fill": "#FFFFFF"
+              }
+          },
+          {
+              "id": "1022757",
+              "label": "1009697",
+              "size": "80",
+              "degree": "360",
+              "type": "",
+              "x": "630",
+              "y": "5",
+              "color1": "",
+              "color2": "",
+              "style": {
+                  "fill": "#FFB90F"
+              }
+          },
+          {
+              "id": "1022758",
+              "label": "1009698",
+              "size": "80",
+              "degree": "360",
+              "type": "demi-node",
+              "x": "720",
+              "y": "5",
+              "color1": "#7FFF00",
+              "color2": "#FFB90F",
+              "style": {
+                  "fill": "#FFFFFF"
+              }
+          },
+          {
+              "id": "1022759",
+              "label": "1009699",
+              "size": "80",
+              "degree": "360",
+              "type": "demi-node",
+              "x": "810",
+              "y": "5",
+              "color1": "#FFB90F",
+              "color2": "#FF0000",
+              "style": {
+                  "fill": "#FFFFFF"
+              }
+          }
+      ]
+      }
+
 
 
     };//{ id: '0', label: 'test', x: 20, y: 55 }
     this.comboGraph = null;
     this.forceGraph = null;
     this.pathGraph = null;
+    this.historyGraph = null;
+
   }
 
   //publish message
@@ -133,6 +280,15 @@ export default class App extends Component {
   publishmsgComboData = (dataselected) => {
     console.log("app publish")
     PubSub.publish('COMBODATA', dataselected);
+  }
+  publishmsgPathData = (pathdata) => {
+    console.log("app publish")
+    PubSub.publish('PATHDATA', pathdata);
+  }
+
+  publishmsgPathDataToHeader = (pathdata) => {
+    console.log("app publish")
+    PubSub.publish('PATHDATAHEADER', pathdata);
   }
 
   // callAPI() {
@@ -158,7 +314,7 @@ export default class App extends Component {
       comboData: this.undo[0].comboData,
       nodeid: this.undo[0].nodeid,
       edgeid: this.undo[0].edgeid,
-      pathDate:this.undo[0].pathDate,
+      pathDate: this.undo[0].pathDate,
     }, () => {
       this.future.unshift(this.current); //0 current
       (this.previous[1] === "node") ? this.publishmsgNode() : this.publishmsgEdge();
@@ -180,7 +336,7 @@ export default class App extends Component {
       comboData: this.redo[0].comboData,
       nodeid: this.redo[0].nodeid,
       edgeid: this.redo[0].edgeid,
-      pathDate:this.redo[0].pathDate,
+      pathDate: this.redo[0].pathDate,
     }, () => {
       this.previous.splice(1, 0, this.current);
 
@@ -205,26 +361,28 @@ export default class App extends Component {
 
       //   });
 
-        axios.post(`http://localhost:8080/kaggle/time/subgraph/validtime?st=` + stateObj[0] + `&et= ` + stateObj[1], this.state.pathDate)
+      axios.post(`http://localhost:8080/kaggle/time/subgraph/validtime?st=` + stateObj[0] + `&et= ` + stateObj[1], this.state.pathDate)
         .then(res => {
           console.log("DATE", `http://localhost:8080/kaggle/time/subgraph/validtime?st=` + stateObj[0] + `&et= ` + stateObj[1])
           this.setState({ comboData: res.data });
+          this.setPrompt();
 
         });
 
     });
 
-    PubSub.subscribe('DAY', (_, stateObj) => {
-      console.log("day", stateObj);
+    // PubSub.subscribe('DAY', (_, stateObj) => {
+    //   console.log("day", stateObj);
 
-        axios.post(`http://localhost:8080/kaggle/time/subgraph/validtime?st=` + stateObj[0] + `&et= ` + stateObj[1], this.state.pathDate)
-        .then(res => {
-          console.log("day", `http://localhost:8080/kaggle/time/subgraph/validtime?st=` + stateObj[0] + `&et= ` + stateObj[1])
-          this.setState({ comboData: res.data });
+    //   axios.post(`http://localhost:8080/kaggle/time/subgraph/validtime?st=` + stateObj[0] + `&et= ` + stateObj[1], this.state.pathDate)
+    //     .then(res => {
+    //       console.log("day", `http://localhost:8080/kaggle/time/subgraph/validtime?st=` + stateObj[0] + `&et= ` + stateObj[1])
+    //       this.setState({ comboData: res.data });
 
-        });
 
-    });
+    //     });
+
+    // });
 
     PubSub.subscribe('ClickList', (_, stateObj) => {
       this.saveUndo();
@@ -232,6 +390,7 @@ export default class App extends Component {
         axios.get(`http://localhost:8080/kaggle/` + stateObj[1].toLowerCase() + `/` + stateObj[2])
           .then(res => {
             this.setState({ comboData: res.data });
+            this.setPrompt();
 
           });
       }
@@ -239,9 +398,14 @@ export default class App extends Component {
         axios.get(`http://localhost:8080/kaggle/edge/` + stateObj[5].toLowerCase() + `/` + stateObj[1].toLowerCase() + '/' + stateObj[3] + '/' + stateObj[2].toLowerCase() + '/' + stateObj[4])
           .then(res => {
             this.setState({ comboData: res.data });
+            this.setPrompt();
             //this.comboDataVir.cloneDeep(this.state.comboData)
           });
       }
+    });
+    PubSub.subscribe('AFTERFILTRE', (_, stateObj) => {
+      console.log("AFTERFILTRE", stateObj);
+      this.setState({ comboData: stateObj })
     });
 
 
@@ -404,17 +568,15 @@ export default class App extends Component {
       <h3 class="serif" >${header}</h3>
       <HR align=center width=100 color=#EEE9E9 SIZE=1>
       <div align="left"><button class=" btnInMenu" >Delete</button></div>
-      <div align="left"><button class=" btnInMenu" >History</button></div>
-      <div align="left"><button class=" btnInMenu" >Details</button></div>`;
+      <div align="left"><button class=" btnInMenu" >History</button></div>`;
       },
 
       handleMenuClick: (target, item) => {
         console.log(target.innerText, item);
         if (target.innerText === "Delete") {
           this.handleDelete();
-        } else if (target.innerText === "Detail") {
-
-
+        } else if (target.innerText === "History") {
+          this.handleHistory();
         }
       },
       // offsetX and offsetY include the padding of the parent container
@@ -437,7 +599,7 @@ export default class App extends Component {
       height: document.getElementById('path').scrollHeight || 200,
       defaultNode: {
         shape: "circle",
-        size: [25],
+        size: [40],
 
         style: {
           lineWidth: 1
@@ -445,7 +607,7 @@ export default class App extends Component {
 
         labelCfg: {
           style: {
-            fill: "#fff",
+            fill: "#000000",
             fontSize: 10
           }
         }
@@ -569,11 +731,15 @@ export default class App extends Component {
       var nodescopy = cloneDeep(this.state.pathDate.nodes);
       // nodescopy.splice(nodescopy.length-1,1);
       if (this.state.clickId === '01') {
+        this.nodeClickedPath.push('user');
         this.setState({ isNode: true, clickLabel: "user" },
           () => {
 
             let objNode = {
-              id: (nodescopy.length).toString(), label: this.state.clickLabel, x: 15 + (nodescopy.length) * 95, y: 55,
+              //id: (nodescopy.length).toString(), label: this.state.clickLabel+'1', x: 15 + (nodescopy.length) * 95, y: 55,
+              id: "user" + (nodescopy.length).toString(), label: this.state.clickLabel, labelForCard: this.state.clickLabel, labelForQuery: this.state.clickLabel + '1', x: 15 + (nodescopy.length) * 120, y: 55,
+
+
               style: {
                 fill: "#FF6666",
                 stroke: "#1C1C1C"
@@ -597,11 +763,14 @@ export default class App extends Component {
       }
       else if (this.state.clickId === '02') {
         //item
+        this.nodeClickedPath.push('item');
         this.setState({ isNode: true, clickLabel: "item" },
           () => {
 
             let objNode = {
-              id: (nodescopy.length).toString(), label: this.state.clickLabel, x: 15 + (nodescopy.length) * 95, y: 55,
+              //id: (nodescopy.length).toString(), label: this.state.clickLabel+'1', x: 15 + (nodescopy.length) * 95, y: 55,
+              id: "item" + (nodescopy.length).toString(), label: this.state.clickLabel, labelForCard: this.state.clickLabel, labelForQuery: this.state.clickLabel + '1', x: 15 + (nodescopy.length) * 120, y: 55,
+
               style: {
                 fill: "#006699",
                 stroke: "#1C1C1C"
@@ -623,11 +792,14 @@ export default class App extends Component {
       }
       else if (this.state.clickId === '03') {
         //category
+        this.nodeClickedPath.push('category');
         this.setState({ isNode: true, clickLabel: "category" },
           () => {
 
             let objNode = {
-              id: (nodescopy.length).toString(), label: this.state.clickLabel, x: 15 + (nodescopy.length) * 95, y: 55,
+              // id: (nodescopy.length).toString(), label: this.state.clickLabel+'1', x: 15 + (nodescopy.length) * 95, y: 55,
+              id: "category" + (nodescopy.length).toString(), label: this.state.clickLabel, labelForCard: this.state.clickLabel, labelForQuery: this.state.clickLabel + '1', x: 15 + (nodescopy.length) * 120, y: 55,
+
               style: {
                 fill: "#FFFF00",
                 stroke: "#1C1C1C"
@@ -651,6 +823,7 @@ export default class App extends Component {
       axios.get(`http://localhost:8080/kaggle/combo/` + this.state.clickLabel)
         .then(res => {
           this.setState({ comboData: res.data });
+          this.setPrompt();
         })
       axios.get(`http://localhost:8080/kaggle/node/` + this.state.clickLabel + '/1')
         .then(res => {
@@ -704,40 +877,56 @@ export default class App extends Component {
         //belongto
         sourcelabel = "item";
         targetlabel = "category";
-        if (this.state.pathDate.nodes[this.state.pathDate.nodes.length - 1].label === "category") {
+        var nodescopy = cloneDeep(this.state.pathDate.nodes);
+        //modify the label of the node
+        nodescopy[nodescopy.length - 1].labelForCard = nodescopy[nodescopy.length - 1].labelForCard + "\n(--belongto)"
+        if (this.state.pathDate.nodes[this.state.pathDate.nodes.length - 1].label.substring(0, 8) === "category") {
+          // check the nb item in nodes
+          let nb = 1
+          if (typeof (this.statisticalFieldNumber(this.nodeClickedPath).item) !== "undefined") {
+            nb = this.statisticalFieldNumber(this.nodeClickedPath).item + 1;
+          }
           //创建一个Item
-          var nodescopy = cloneDeep(this.state.pathDate.nodes);
-          //item
-
-              let objNode = {
-                id: (nodescopy.length).toString(), label: "item", x: 15 + (nodescopy.length) * 95, y: 55,
-                style: {
-                  fill: "#006699",
-                  stroke: "#1C1C1C"
-                }
-              };
-              nodescopy.push(objNode);
-              let data = Object.assign({}, this.state.pathDate, { nodes: nodescopy });
-              this.setState({
-                pathDate: data
-              });
+          let objNode = {
+            // id: (nodescopy.length).toString(), label: "item"+nb, x: 15 + (nodescopy.length) * 95, y: 55,
+            id: "item" + (nodescopy.length).toString(), label: "item", labelForCard: "item", labelForQuery: "item" + nb, x: 15 + (nodescopy.length) * 120, y: 55,
+            style: {
+              fill: "#006699",
+              stroke: "#1C1C1C"
+            }
+          };
+          nodescopy.push(objNode);
+          this.nodeClickedPath.push("item")
+          let data = Object.assign({}, this.state.pathDate, { nodes: nodescopy });
+          this.setState({
+            pathDate: data
+          });
         }
 
-        else if (this.state.pathDate.nodes[this.state.pathDate.nodes.length - 1].label === "item") {
+        else if (this.state.pathDate.nodes[this.state.pathDate.nodes.length - 1].label.substring(0, 4) === "item") {
           //创建一个category
-          var nodescopy = cloneDeep(this.state.pathDate.nodes);
-             //category
-        
-               let objNode = { id: (nodescopy.length).toString(), label: "category", x: 15 + (nodescopy.length) * 95, y: 55,
-                 style: {
-                 fill: "#FFFF00",
-                 stroke: "#1C1C1C"
-             } };nodescopy.push(objNode);
-               let data = Object.assign({}, this.state.pathDate, { nodes: nodescopy });
-     
-               this.setState({
-                 pathDate: data
-               });
+          // check the nb item in nodes
+          let nb = 1
+          if (typeof (this.statisticalFieldNumber(this.nodeClickedPath).category) !== "undefined") {
+            nb = this.statisticalFieldNumber(this.nodeClickedPath).category + 1;
+          }
+
+          //category
+
+          let objNode = {
+            //id: (nodescopy.length).toString(), label: "category"+nb, x: 15 + (nodescopy.length) * 95, y: 55,
+            id: "category" + (nodescopy.length).toString(), label: "category", labelForCard: "category", labelForQuery: "category" + nb, x: 15 + (nodescopy.length) * 120, y: 55,
+            style: {
+              fill: "#FFFF00",
+              stroke: "#1C1C1C"
+            }
+          }; nodescopy.push(objNode);
+          this.nodeClickedPath.push('category')
+          let data = Object.assign({}, this.state.pathDate, { nodes: nodescopy });
+
+          this.setState({
+            pathDate: data
+          });
 
         }
       }
@@ -745,55 +934,92 @@ export default class App extends Component {
         //subCategory
         sourcelabel = "category";
         targetlabel = "category";
-        if (this.state.pathDate.nodes[this.state.pathDate.nodes.length - 1].label === "category") {
+        var nodescopy = cloneDeep(this.state.pathDate.nodes);
+        //modify the label of the node
+        nodescopy[nodescopy.length - 1].labelForCard = nodescopy[nodescopy.length - 1].labelForCard + "\n(--subCategory)"
+        if (this.state.pathDate.nodes[this.state.pathDate.nodes.length - 1].label.substring(0, 8) === "category") {
           //创建一个category
-          var nodescopy = cloneDeep(this.state.pathDate.nodes);
+
+
+          // check the nb category in nodes
+          let nb = 1
+          if (typeof (this.statisticalFieldNumber(this.nodeClickedPath).category) !== "undefined") {
+            nb = this.statisticalFieldNumber(this.nodeClickedPath).category + 1;
+          }
           //category
-            let objNode = { id: (nodescopy.length).toString(), label: "category", x: 15 + (nodescopy.length) * 95, y: 55,
-              style: {
+          let objNode = {
+            // id: (nodescopy.length).toString(), label: "category" + nb, x: 15 + (nodescopy.length) * 95, y: 55,
+            id: "category" + (nodescopy.length).toString(), label: "category", labelForCard: "category", labelForQuery: "category" + nb, x: 15 + (nodescopy.length) * 120, y: 55,
+
+            style: {
               fill: "#FFFF00",
               stroke: "#1C1C1C"
-          } };nodescopy.push(objNode);
-            let data = Object.assign({}, this.state.pathDate, { nodes: nodescopy });
-  
-            this.setState({
-              pathDate: data
-            });
+            }
+          }; nodescopy.push(objNode);
+          this.nodeClickedPath.push('category')
+          let data = Object.assign({}, this.state.pathDate, { nodes: nodescopy });
+
+          this.setState({
+            pathDate: data
+          });
         };
-        }
-      
+      }
+
 
       if (this.state.clickLabel === "view" | this.state.clickLabel === 'addtocart' | this.state.clickLabel === 'transaction') {
-        console.log("eeeeee",this.state.pathDate.nodes)
-        if (this.state.pathDate.nodes[this.state.pathDate.nodes.length - 1].label === "user") {
+        console.log("eeeeee")
+
+        var nodescopy = cloneDeep(this.state.pathDate.nodes);
+        //modify the label of the node
+        nodescopy[nodescopy.length - 1].labelForCard = nodescopy[nodescopy.length - 1].labelForCard + "\n(--" + this.state.clickLabel + ")"
+        if (this.state.pathDate.nodes[this.state.pathDate.nodes.length - 1].label.substring(0, 4) === "user") {
           //创建一个Item
-          var nodescopy = cloneDeep(this.state.pathDate.nodes);
+
+          // check the nb item in nodes
+          let nb = 1
+          if (typeof (this.statisticalFieldNumber(this.nodeClickedPath).item) !== "undefined") {
+            nb = this.statisticalFieldNumber(this.nodeClickedPath).item + 1;
+          }
+
           //item
 
-              let objNode = {
-                id: (nodescopy.length).toString(), label: "item", x: 15 + (nodescopy.length) * 95, y: 55,
-                style: {
-                  fill: "#006699",
-                  stroke: "#1C1C1C"
-                }
-              };
-              nodescopy.push(objNode);
-              let data = Object.assign({}, this.state.pathDate, { nodes: nodescopy });
-              this.setState({
-                pathDate: data
-              });
-        }
-        else if (this.state.pathDate.nodes[this.state.pathDate.nodes.length - 1].label === "item") {
-          //创建一个user
-          var nodescopy = cloneDeep(this.state.pathDate.nodes);
           let objNode = {
-            id: (nodescopy.length).toString(), label: "user", x: 15 + (nodescopy.length) * 95, y: 55,
+            // id: (nodescopy.length).toString(), label: "item" + nb, x: 15 + (nodescopy.length) * 95, y: 55,
+            id: "item" + (nodescopy.length).toString(), label: "item", labelForCard: "item", labelForQuery: "item" + nb, x: 15 + (nodescopy.length) * 120, y: 55,
+
+            style: {
+              fill: "#006699",
+              stroke: "#1C1C1C"
+            }
+          };
+          nodescopy.push(objNode);
+          this.nodeClickedPath.push('item');
+          let data = Object.assign({}, this.state.pathDate, { nodes: nodescopy });
+          this.setState({
+            pathDate: data
+          });
+
+        }
+        else if (this.state.pathDate.nodes[this.state.pathDate.nodes.length - 1].label.substring(0, 4) === "item") {
+          //创建一个user
+
+          // check the nb user in nodes
+          let nb = 1
+          if (typeof (this.statisticalFieldNumber(this.nodeClickedPath).user) !== "undefined") {
+            nb = this.statisticalFieldNumber(this.nodeClickedPath).user + 1;
+          }
+
+          let objNode = {
+            // id: (nodescopy.length).toString(), label: "user" + nb, x: 15 + (nodescopy.length) * 95, y: 55,
+            id: "user" + (nodescopy.length).toString(), label: "user", labelForCard: "user", labelForQuery: "user" + nb, x: 15 + (nodescopy.length) * 120, y: 55,
+
             style: {
               fill: "#FF6666",
               stroke: "#1C1C1C"
             }
-          }; 
+          };
           nodescopy.push(objNode);
+          this.nodeClickedPath.push("user");
           let data = Object.assign({}, this.state.pathDate, { nodes: nodescopy });
 
           this.setState({
@@ -803,7 +1029,9 @@ export default class App extends Component {
       }
 
       let objEdge = {
-        source: this.state.pathDate.nodes[this.state.pathDate.nodes.length - 2].id, target: this.state.pathDate.nodes[this.state.pathDate.nodes.length - 1].id, label: this.state.clickLabel,
+        source: this.state.pathDate.nodes[this.state.pathDate.nodes.length - 2].id,
+        target: this.state.pathDate.nodes[this.state.pathDate.nodes.length - 1].id,
+        label: this.state.clickLabel,
         style: {
           stroke: "#1C1C1C"
         }
@@ -820,6 +1048,7 @@ export default class App extends Component {
       axios.get(`http://localhost:8080/kaggle/combo/` + this.state.clickLabel + `/` + sourcelabel + `/` + targetlabel)
         .then(res => {
           this.setState({ comboData: res.data });
+          this.setPrompt();
         })
       axios.get(`http://localhost:8080/kaggle/edge/` + this.state.clickLabel + '/1')
         .then(res => {
@@ -861,7 +1090,7 @@ export default class App extends Component {
       modes: {
 
 
-        default: ['drag-canvas', 'drag-node', 'drag-combo', 'zoom-canvas'],  //
+        default: ['drag-canvas', 'drag-node', 'drag-combo'],  //, 'zoom-canvas'
       },
 
       defaultCombo: {
@@ -998,6 +1227,231 @@ export default class App extends Component {
       this.handleDetails();
       //this.publishmsgComboData();    
     })
+
+    //history graph
+
+    const lightGreen = "#7FFF00";
+    const lightOrange = "#FFB90F";
+    const lightRed = "#FF0000";
+    const lightBlue = '#5b8ff9';
+
+    // register a pie chart node
+    G6.registerNode("pie-node", {
+      draw: (cfg, group) => {
+        const radius = cfg.size / 2; // node radius
+        const inPercentage1 = 120 / cfg.degree; // the ratio of indegree to outdegree
+        const inPercentage2 = 120 / cfg.degree; // the ratio of indegree to outdegree
+
+        const inAngle1 = inPercentage1 * Math.PI * 2; // the anble for the indegree fan
+        const inAngle2 = inPercentage2 * Math.PI * 2 + inAngle1; // the anble for the indegree fan
+
+        const inArcEnd1 = [
+          radius * Math.cos(inAngle1),
+          -radius * Math.sin(inAngle1)
+        ]; // the end position for the in-degree fan
+        const inArcEnd2 = [
+          radius * Math.cos(inAngle2),
+          -radius * Math.sin(inAngle2)
+        ]; // the end position for the in-degree fan
+
+        let isOutBigArc = 1;
+        if (inAngle1 > Math.PI / 2) {
+          isOutBigArc = 0;
+        }
+        // fan shape for the in degree
+        group.addShape("path", {
+          attrs: {
+            path: [
+              ["M", radius, 0],
+              ["A", radius, radius, 0, 0, 0, inArcEnd1[0], inArcEnd1[1]],
+              ["L", 0, 0],
+              ["Z"]
+            ],
+            lineWidth: 0,
+            fill: lightOrange
+          },
+          name: "in-fan-shape1"
+        });
+
+        // draw the fan shape
+        group.addShape("path", {
+          attrs: {
+            path: [
+              ["M", inArcEnd1[0], inArcEnd1[1]],
+              ["A", radius, radius, 0, 1, 0, radius,0],
+              ["L", 0, 0],
+              ["Z"]
+            ],
+            lineWidth: 0,
+            fill: lightRed
+          },
+          name: "out-fan-shape"
+        });
+        group.addShape("path", {
+          attrs: {
+            path: [
+              ["M", inArcEnd2[0], inArcEnd2[1]],
+              ["A", radius, radius, 0, isOutBigArc, 0, radius, 0],
+              ["L", 0, 0],
+              ["Z"]
+            ],
+            lineWidth: 0,
+            fill: lightGreen
+          },
+          name: "out-fan-shape"
+        });
+        if (cfg.label) {
+          group.addShape("text", {
+            // attrs: style
+            attrs: {
+             
+              textAlign: "center",
+              textBaseline: "middle",
+              text: cfg.label,
+              fill: "white",
+              
+              fontStyle: "bold",
+              
+            },
+            name: "text-shape"
+          });
+        }
+        // 返回 keyshape
+        return group;
+      }
+    });
+
+    G6.registerNode('demi-node', {
+      draw: (cfg, group) => {
+        const radius = cfg.size / 2; // node radius
+        const inPercentage = 180 / cfg.degree; // the ratio of indegree to outdegree
+        const inAngle = inPercentage * Math.PI * 2; // the anble for the indegree fan
+        const inArcEnd = [radius * Math.cos(inAngle), -radius * Math.sin(inAngle)]; // the end position for the in-degree fan
+        let isInBigArc = 0,
+          isOutBigArc = 1;
+        if (inAngle > Math.PI) {
+          isInBigArc = 1;
+          isOutBigArc = 0;
+        }
+        // fan shape for the in degree
+        const fanIn = group.addShape('path', {
+          attrs: {
+            path: [
+              ['M', radius, 0],
+              ['A', radius, radius, 0, isInBigArc, 0, inArcEnd[0], inArcEnd[1]],
+              ['L', 0, 0],
+              ['Z'],
+            ],
+            lineWidth: 0,
+            fill: cfg.color1,
+          },
+          name: 'in-fan-shape',
+        });
+        // draw the fan shape
+        group.addShape('path', {
+          attrs: {
+            path: [
+              ['M', inArcEnd[0], inArcEnd[1]],
+              ['A', radius, radius, 0, isOutBigArc, 0, radius, 0],
+              ['L', 0, 0],
+              ['Z'],
+            ],
+            lineWidth: 0,
+            fill: cfg.color2,
+          },
+          name: 'out-fan-shape',
+        });
+
+        if (cfg.label) {
+          group.addShape("text", {
+            // attrs: style
+            attrs: {
+             
+              textAlign: "center",
+              textBaseline: "middle",
+              text: cfg.label,
+              fill: "white",
+              
+              fontStyle: "bold",
+              
+            },
+            name: "text-shape"
+          });
+        }
+        // 返回 keyshape
+        return fanIn;
+      },
+    });
+
+    const widthH = document.getElementById('history').scrollWidth || 600;
+    const heightH = document.getElementById('history').scrollHeight || 300;
+    this.historyGraph = new G6.Graph({
+      container: document.getElementById('history'),
+      width: widthH,
+      height: heightH,
+      plugins: [],
+     // fitView: true,
+      // translate the comboGraph to align the canvas's center, support by v3.5.1
+      fitCenter: true,
+      modes: {
+         default: ['drag-canvas' ],  //'drag-node', 'drag-combo', 'zoom-canvas'
+      },
+      defaultNode: {
+        type: 'circle',
+        style: {
+          fill:"#FFFFFF",
+          stroke: "#1E90FF",
+          lineWidth: 1,
+        }
+      },
+    });
+    this.historyGraph.addBehaviors(
+      {
+        type: 'collapse-expand-combo',
+        relayout: false,
+      },
+    );
+    this.historyGraph.on('node:mousedown', (evt) => {
+      this.historyGraph.getNodes().forEach((item) => {
+        this.historyGraph.clearItemStates(item);
+      });
+      this.historyGraph.getEdges().forEach((item) => {
+        this.historyGraph.clearItemStates(item);
+      });
+      const { item } = evt;
+      this.historyGraph.setItemState(item, 'selected', true);
+      let idClick = item._cfg.id;
+      let id=0;
+     Object.values(this.state.historyData.nodes).map((value)=>{
+       value.id===idClick? this.setState({indexEtat:id}):console.log(value,value.label,idClick);
+       id=id+1;
+     })
+    });
+    this.historyGraph.on('canvas:click', (evt) => {
+      this.historyGraph.getNodes().forEach((item) => {
+        this.historyGraph.clearItemStates(item);
+      });
+
+      this.historyGraph.getEdges().forEach((item) => {
+        this.historyGraph.clearItemStates(item);
+      });
+
+    });
+    this.historyGraph.data(this.state.historyData);
+    // this.comboGraph.data(this.comboDataVir);
+    this.historyGraph.render();
+
+  }
+  
+
+  statisticalFieldNumber = (arr) => {
+    return arr.reduce(function (prev, next) {
+      console.log("prev", prev)
+      console.log("next", next)
+
+      prev[next] = (prev[next] + 1) || 1;
+      return prev;
+    }, {});
   }
 
   activeBtn = () => {
@@ -1013,6 +1467,15 @@ export default class App extends Component {
     if (this.redo.length >= 1) {
       this.cleredo = false;
     }
+  }
+  setPrompt = () => {
+    if (this.state.comboData.nodes.length == 0) {
+      this.setState({ record: "no record ┗( T﹏T )┛" })
+
+    } else {
+      this.setState({ record: "" })
+    }
+
   }
 
   componentDidUpdate() {
@@ -1034,8 +1497,15 @@ export default class App extends Component {
     })
 
     this.comboGraph.changeData(this.state.comboData);
+    this.historyGraph.changeData(this.state.historyData);
+
     //this.comboGraph.changeData(this.comboDataVir);
+    this.publishmsgPathData(this.state.pathDate);
+    this.publishmsgPathDataToHeader(this.state.pathDate);
+
+
     this.pathGraph.changeData(this.state.pathDate);
+
 
   }
   //fruchterman
@@ -1177,12 +1647,25 @@ export default class App extends Component {
       this.setState({ comboData: deepState })
     }
   }
+
+  handleHistory(){
+    const nodeId=this.comboGraph.findById(this.idSelected)._cfg.id.replace(/[^0-9]/ig,"");
+
+    axios.get(`http://localhost:8080/kaggle/nodehistory/` + this.state.clickLabel+`/`+nodeId)
+    .then(res => {
+      this.setState({historyData: res.data["nodes"] });
+      this.setState({changesInfo:res.data["changes"]});
+    
+    });
+    this.setState({labelHistory:this.idSelected});
+  }
   handleTest = () => {
     console.log("handle test");
     axios.post('http://localhost:8080/kaggle/getBody', this.state.pathDate)
       .then(res => {
         console.log('res=>', res.data);
         this.setState({ comboData: res.data })
+        this.setPrompt();
       });
 
   }
@@ -1192,10 +1675,10 @@ export default class App extends Component {
     this.activeBtn();
     return (
       <div className="App" style={{ position: 'relative' }}>
-        {/* <button onClick={this.force()}></button>*/}<Header  ></Header>
-        <UndoButton handlerClick={this.handleUndo} cle={this.cleundo} style={{position:'fixed'}}></UndoButton>
+        {/* <button onClick={this.force()}></button>*/}<Header record={this.state.record} labelHistory={this.state.labelHistory} changesInfo={this.state.changesInfo} indexEtat={this.state.indexEtat}></Header>
+
+        <UndoButton handlerClick={this.handleUndo} cle={this.cleundo} ></UndoButton>
         <RedoButton handlerClick={this.handleRedo} cle={this.cleredo}></RedoButton>
-        <CenteredGrid clickId={this.state.clickId} clickLabel={this.state.clickLabel}> </CenteredGrid>
 
         {/* <p className="App-intro">{this.state.apiResponse}</p>
         <button id="undo" onClick={this.handleUndo}>Undo</button>
