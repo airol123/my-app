@@ -45,7 +45,7 @@ export default function Calendar(props) {
     }
 
     useEffect(() => {
-        console.log("date and time", starttime,endtime, timeSelected);
+        console.log("date and time", starttime,endtime);
        
     });
 
@@ -57,6 +57,7 @@ export default function Calendar(props) {
                         moment("01/28/2015", dateFormat),
                         moment("01/28/2015", dateFormat)
                     ]}
+                    showTime
                     disabledDate={disabledDate}
                     onChange={(value) => handleSelectTime(value)}
                 />

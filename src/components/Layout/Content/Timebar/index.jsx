@@ -16,7 +16,7 @@ export default function Timebar() {
     return (
         <div>
             <Calendar setStartDate={setStartDate} setEndDate={setEndDate} />
-            {startDate==endDate?<Daybar startDate={startDate} endDate={endDate}/>:console.log(false)}
+            {/* {startDate==endDate?<Daybar startDate={startDate} endDate={endDate}/>:console.log(false)} */}
             
         </div>
     )
