@@ -1,4 +1,3 @@
-
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import { FixedSizeList } from 'react-window';
@@ -85,7 +84,7 @@ function handleTransProps(index) {
       <ListItem selected={selectedIndex === index} button style={style} key={index} onClick={(event)=>{handleListItemClick(event,index);handleTransProps(index)}}>
            {/*console.log("nodes",nodes)*/}
            
-           {isRalation==="false"?index === 0 ? (<ListItemText primary={`${labelSource} id   :`} /> ) : <ListItemText primary={`---${labelSource} ${nodes[index-1]}  `} />:index === 0 ? <ListItemText primary={`${labelSource} id -->${labelTarget} id  :`} /> : <ListItemText primary={`---${labelSource} ${relations[index-1].source}-->${labelTarget} ${relations[index-1].target}`} />}
+           {isRalation==="false"?index === 0 ? (<ListItemText primary={`${labelSource} id   :`} /> ) : <ListItemText primary={`---${labelSource} ${nodes[index-1]}  `} />:index === 0 ? <ListItemText primary={`${labelSource} id --${label}-->${labelTarget} id  :`} /> : <ListItemText primary={`---${labelSource} ${relations[index-1].source}-->${labelTarget} ${relations[index-1].target}`} />}
       </ListItem>
     );
   }
@@ -127,6 +126,3 @@ function handleTransProps(index) {
   )
   
 }
-
-
-
