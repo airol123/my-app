@@ -71,9 +71,10 @@ const useStyles = makeStyles((theme) => ({
       clique=true;
         //setTextInput(e.target.value);
         const ev=e.target.value
-        console.log(ev.trim()==="")
+        //console.log(ev.trim()==="")
         if(ev.trim()!==""){setCount(e.target.value);
-          console.log("count1",e.target.value)}
+         // console.log("count1",e.target.value)
+        }
 
       }
 
@@ -83,7 +84,7 @@ const useStyles = makeStyles((theme) => ({
           
           axios.get(`http://localhost:8080/kaggle/edge/`+label+'/'+count)
           .then(res => {
-            console.log(res.data);
+           // console.log(res.data);
             publishEdge(res.data);
           });   
 
@@ -91,18 +92,18 @@ const useStyles = makeStyles((theme) => ({
         else{  
           axios.get(`http://localhost:8080/kaggle/node/`+labelSource+'/'+count)
             .then(res => {
-              console.log(res.data);
+           //   console.log(res.data);
               publishNode(res.data);
             });}
    
       }
     function publishNode(msgList){
-      console.log(msgList)
+    //  console.log(msgList)
         PubSub.publish('PAGECHANGENODE',msgList);
       }
 
     function publishEdge(msgList){
-      console.log(msgList)
+    //  console.log(msgList)
       PubSub.publish('PAGECHANGEEDGE',msgList);
     }
 
@@ -111,7 +112,7 @@ const useStyles = makeStyles((theme) => ({
         initialiseCount();
         availibleBF()
         setTextInput(count);
-        console.log("effect",count)
+      //  console.log("effect",count)
         if(clique){obtainData();clique=false;}
         saveRecord();
     }

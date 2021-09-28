@@ -196,14 +196,14 @@ export default function ReactVirtualizedTable() {
 
 
     function  setRowsInfo(){
-      console.log("setRow",rows)
+      // console.log("setRow",rows)
         let rowsInfo=[];
         if (sample!==null){
             for (let i = 0; i < sample.length; i += 1) {
             const randomSelection = sample[i];
             rowsInfo.push(createData(i, ...randomSelection));}
         setRows(rowsInfo)
-        console.log(rows)
+        // console.log(rows)
     }
     }
     
