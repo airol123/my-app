@@ -103,6 +103,10 @@ function handleTransProps(index) {
   }
 
   useEffect(() => {
+    PubSub.unsubscribe('NODE');
+    PubSub.unsubscribe('PAGECHANGEEDGE');
+    PubSub.unsubscribe('EDGE');
+    PubSub.unsubscribe('PAGECHANGENODE');
     subNode();
     subNodePage();
     subEdge();
