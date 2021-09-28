@@ -86,7 +86,7 @@ export default function RecipeReviewCard(props) {
     }, [card]);
 
     useEffect(() => {
-        console.log("cards3", cards,'id',id)
+        // console.log("cards3", cards,'id',id)
     })
 
 

@@ -6,10 +6,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import TextField from '@material-ui/core/TextField';
-import axios from 'axios';
-import cloneDeep from "lodash/cloneDeep";
 import PubSub from 'pubsub-js'
-import { idID } from "@material-ui/core/locale";
 
 const useStyles = makeStyles((theme) => ({
     formControl: {
@@ -50,13 +47,13 @@ const attributes = [];
 
 const operations = ["=", ">", "<", ">=", "<="];
 
-function getLabels() {
-    axios.get(`http://localhost:8080/kaggle/schema`)
-        .then(res => {
-            labels = cloneDeep(res.data.labels);
+// function getLabels() {
+//     axios.get(`http://localhost:8080/kaggle/schema`)
+//         .then(res => {
+//             labels = cloneDeep(res.data.labels);
 
-        });
-}
+//         });
+// }
 
 function getStyles(attribute, attributeA, theme) {
     return {
@@ -99,7 +96,7 @@ export default function MultipleSelect(props) {
     };
 
     const handleClickAttribut = () => {
-        console.log('ebchqnge', card)
+        // console.log('ebchqnge', card)
         setT(card.label)
 
 
@@ -128,7 +125,7 @@ export default function MultipleSelect(props) {
     };
     /** 将func的方法传递给useSyncCallback然后返回一个新的函数 */
     const func = useSyncCallback(() => {
-        console.log(attributes);
+        // console.log(attributes);
     });
 
     function createCard(relation, id, label, attribute, operation, value) {
@@ -142,7 +139,7 @@ export default function MultipleSelect(props) {
         o.attribute = attribute
         o.operation = operation
         o.value = value
-        console.log('input create ', o, id)
+        // console.log('input create ', o, id)
         return o
     }
 
@@ -157,7 +154,7 @@ export default function MultipleSelect(props) {
     function extraxKeyWord(word) {
         var chars = [];
         for (var i = 0; i < word.length; i++) {
-            if (word.charAt(i) != '\n') { 
+            if (word.charAt(i) !== '\n') { 
                 chars.push(word.charAt(i)) }
             else { 
                 break; }
@@ -169,7 +166,7 @@ export default function MultipleSelect(props) {
 
     function setAttributes(label) {
         let preAttributes
-        let reg = /[0-9]+/g;
+       // let reg = /[0-9]+/g;
         let label1 =extraxKeyWord(label) //label.replace(reg, "");
         
 
@@ -199,14 +196,14 @@ export default function MultipleSelect(props) {
         }
         attributes.splice(0, attributes.length);
         preAttributes.map((pre) => { attributes.push(pre) })
-        console.log("attributes", attributes)
+        // console.log("attributes", attributes)
     }
 
     function subPathData() {
         PubSub.subscribe('PATHDATA', (_, stateObj) => {
-            console.log(stateObj)
+            // console.log(stateObj)
             if (typeof (stateObj.nodes) !== "undefined") {
-                console.log("PathData", stateObj.nodes);
+                // console.log("PathData", stateObj.nodes);
                 labels = [];
                 labelsForQuery = [];
                 for (var i = 0; i < stateObj.nodes.length; i++) {
@@ -215,7 +212,7 @@ export default function MultipleSelect(props) {
                     labelsForQuery.push(stateObj.nodes[i].labelForQuery);
                     labelsForQuery = Array.from(new Set(labelsForQuery))
                 }
-                console.log("PathData", labels, labelsForQuery);
+                // console.log("PathData", labels, labelsForQuery);
             }
             if (typeof (stateObj.edges) !== "undefined") {
                 for (var i = 0; i < stateObj.edges.length; i++) {
@@ -224,7 +221,7 @@ export default function MultipleSelect(props) {
                     labelsForQuery.push(stateObj.nodes[i].labelsForQuety);
                     labelsForQuery = Array.from(new Set(labelsForQuery))
                 }
-                console.log("PathData", labels, labelsForQuery);
+                // console.log("PathData", labels, labelsForQuery);
             }
 
 
@@ -242,14 +239,14 @@ export default function MultipleSelect(props) {
     useEffect(() => {
 
         configCard(relation, id, label, attribute, operation, inputValue);
-        console.log("input confif effect ", card)
+        // console.log("input confif effect ", card)
     }, [relation, id, label, attribute, operation, inputValue, relationCard])
 
 
 
 
     useEffect(() => {
-        console.log("input card effect", card)
+        // console.log("input card effect", card)
     }, [card])
 
 
@@ -273,7 +270,7 @@ export default function MultipleSelect(props) {
             </FormControl>
             <FormControl className={classes.formControl}>
                 <InputLabel id="demo-mutiple-name-label">Attribut</InputLabel>
-                {console.log("cards[id].attribute", cards[id].attribute)}
+                {/* {console.log("cards[id].attribute", cards[id].attribute)} */}
                 <Select
                     labelId="demo-mutiple-name-label"
                     id="demo-mutiple-name"

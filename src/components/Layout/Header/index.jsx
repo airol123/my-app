@@ -23,10 +23,7 @@ const drawerWidth = 370;
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
-
   },
-
-
   appBar: {
     transition: theme.transitions.create(['margin', 'width'], {
       easing: theme.transitions.easing.sharp,
@@ -92,7 +89,7 @@ export default function PersistentDrawerLeft(props) {
   const [open, setOpen] = React.useState(false);
   const [cards, setCards] = useState([{}]);
   const [pathData, setpathData] = useState();
-const {record,labelHistory,changesInfo,indexEtat} =props;
+const {record,labelHistory,changesInfo,indexEtat,node,edge} =props;
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -202,7 +199,7 @@ const {record,labelHistory,changesInfo,indexEtat} =props;
         })}
       >
         <div className={classes.drawerHeader} />
-        <CenteredGrid record={record} labelHistory={labelHistory} changesInfo={changesInfo} indexEtat={indexEtat} />
+        <CenteredGrid record={record} labelHistory={labelHistory} changesInfo={changesInfo} indexEtat={indexEtat} node={node} edge={edge}/>
       </main>
     </div>
   );

@@ -1,12 +1,11 @@
 //import logo from './logo.svg';
 import G6 from '@antv/g6';
 import './App.css';
-import { Footer, Header, CenteredGrid, UndoButton, RedoButton } from './components/Layout'
+import { Footer, Header, UndoButton, RedoButton } from './components/Layout'
 import axios from 'axios';
 import React, { Component } from 'react'
 import PubSub from 'pubsub-js'
 import cloneDeep from "lodash/cloneDeep";
-import Drawer from './components/TemporaryDrawer/index.jsx'
 
 export default class App extends Component {
   constructor(props) {
@@ -16,6 +15,7 @@ export default class App extends Component {
     this.cleundo = true;
     this.cleredo = true;
     this.idSelected = "";
+    this.labelSelected = "";
     this.isNode = false;
     this.isCombo = false;
     this.isEdge = false;
@@ -24,22 +24,22 @@ export default class App extends Component {
     this.current = "";
     this.comboDataVir = {};
     this.nodeClickedPath = [];
+    this.updateCombo = true;
+    this.comboRecord = {};
     //state
     this.state = {
-      indexEtat:"0",
+      indexEtat: "0",
       clickId: "",
       isNode: true,
       clickLabel: "",
-      starttime: "",
-      endtime: "",
       record: "waiting for work ヾ(￣▽￣)",
       labelHistory: "____",
-      changesInfo:[{disappear:[],appear:[],valuechange:[],validtime:[]},
-        {disappear:[],appear:[],valuechange:[],validtime:[]}],
+      changesInfo: [{ disappear: [], appear: [], valuechange: [], validtime: [] },
+      { disappear: [], appear: [], valuechange: [], validtime: [] }],
       comboData: {
       },
       nodeid: {},
-      edgeid: {},
+      edgeid: {}, // date about relation to be transmitted in the list
       forceData: {
         nodes: [
           {
@@ -121,141 +121,141 @@ export default class App extends Component {
       },
       pathDate: { nodes: [], edges: [] },
       historyData: {
-        "nodes":[
+        "nodes": [
           {
-              "id": "1022750",
-              "label": "1009690",
-              "size": "80",
-              "x": "0",
-              "y": "5"
+            "id": "1022750",
+            "label": "1009690",
+            "size": "80",
+            "x": "0",
+            "y": "5"
           },
           {
-              "id": "1022751",
-              "label": "1009691",
-              "size": "80",
-              "degree": "360",
-              "type": "demi-node",
-              "x": "90",
-              "y": "5",
-              "color1": "#7FFF00",
-              "color2": "#FFB90F",
-              "style": {
-                  "fill": "#FFFFFF"
-              }
+            "id": "1022751",
+            "label": "1009691",
+            "size": "80",
+            "degree": "360",
+            "type": "demi-node",
+            "x": "90",
+            "y": "5",
+            "color1": "#7FFF00",
+            "color2": "#FFB90F",
+            "style": {
+              "fill": "#FFFFFF"
+            }
           },
           {
-              "id": "1022752",
-              "label": "1009692",
-              "size": "80",
-              "degree": "360",
-              "type": "demi-node",
-              "x": "180",
-              "y": "5",
-              "color1": "#7FFF00",
-              "color2": "#FFB90F",
-              "style": {
-                  "fill": "#FFFFFF"
-              }
+            "id": "1022752",
+            "label": "1009692",
+            "size": "80",
+            "degree": "360",
+            "type": "demi-node",
+            "x": "180",
+            "y": "5",
+            "color1": "#7FFF00",
+            "color2": "#FFB90F",
+            "style": {
+              "fill": "#FFFFFF"
+            }
           },
           {
-              "id": "1022753",
-              "label": "1009693",
-              "size": "80",
-              "degree": "360",
-              "type": "demi-node",
-              "x": "270",
-              "y": "5",
-              "color1": "#7FFF00",
-              "color2": "#FFB90F",
-              "style": {
-                  "fill": "#FFFFFF"
-              }
+            "id": "1022753",
+            "label": "1009693",
+            "size": "80",
+            "degree": "360",
+            "type": "demi-node",
+            "x": "270",
+            "y": "5",
+            "color1": "#7FFF00",
+            "color2": "#FFB90F",
+            "style": {
+              "fill": "#FFFFFF"
+            }
           },
           {
-              "id": "1022754",
-              "label": "1009694",
-              "size": "80",
-              "degree": "360",
-              "type": "demi-node",
-              "x": "360",
-              "y": "5",
-              "color1": "#7FFF00",
-              "color2": "#FFB90F",
-              "style": {
-                  "fill": "#FFFFFF"
-              }
+            "id": "1022754",
+            "label": "1009694",
+            "size": "80",
+            "degree": "360",
+            "type": "demi-node",
+            "x": "360",
+            "y": "5",
+            "color1": "#7FFF00",
+            "color2": "#FFB90F",
+            "style": {
+              "fill": "#FFFFFF"
+            }
           },
           {
-              "id": "1022755",
-              "label": "1009695",
-              "size": "80",
-              "degree": "360",
-              "type": "demi-node",
-              "x": "450",
-              "y": "5",
-              "color1": "#7FFF00",
-              "color2": "#FFB90F",
-              "style": {
-                  "fill": "#FFFFFF"
-              }
+            "id": "1022755",
+            "label": "1009695",
+            "size": "80",
+            "degree": "360",
+            "type": "demi-node",
+            "x": "450",
+            "y": "5",
+            "color1": "#7FFF00",
+            "color2": "#FFB90F",
+            "style": {
+              "fill": "#FFFFFF"
+            }
           },
           {
-              "id": "1022756",
-              "label": "1009696",
-              "size": "80",
-              "degree": "360",
-              "type": "demi-node",
-              "x": "540",
-              "y": "5",
-              "color1": "#7FFF00",
-              "color2": "#FFB90F",
-              "style": {
-                  "fill": "#FFFFFF"
-              }
+            "id": "1022756",
+            "label": "1009696",
+            "size": "80",
+            "degree": "360",
+            "type": "demi-node",
+            "x": "540",
+            "y": "5",
+            "color1": "#7FFF00",
+            "color2": "#FFB90F",
+            "style": {
+              "fill": "#FFFFFF"
+            }
           },
           {
-              "id": "1022757",
-              "label": "1009697",
-              "size": "80",
-              "degree": "360",
-              "type": "",
-              "x": "630",
-              "y": "5",
-              "color1": "",
-              "color2": "",
-              "style": {
-                  "fill": "#FFB90F"
-              }
+            "id": "1022757",
+            "label": "1009697",
+            "size": "80",
+            "degree": "360",
+            "type": "",
+            "x": "630",
+            "y": "5",
+            "color1": "",
+            "color2": "",
+            "style": {
+              "fill": "#FFB90F"
+            }
           },
           {
-              "id": "1022758",
-              "label": "1009698",
-              "size": "80",
-              "degree": "360",
-              "type": "demi-node",
-              "x": "720",
-              "y": "5",
-              "color1": "#7FFF00",
-              "color2": "#FFB90F",
-              "style": {
-                  "fill": "#FFFFFF"
-              }
+            "id": "1022758",
+            "label": "1009698",
+            "size": "80",
+            "degree": "360",
+            "type": "demi-node",
+            "x": "720",
+            "y": "5",
+            "color1": "#7FFF00",
+            "color2": "#FFB90F",
+            "style": {
+              "fill": "#FFFFFF"
+            }
           },
           {
-              "id": "1022759",
-              "label": "1009699",
-              "size": "80",
-              "degree": "360",
-              "type": "demi-node",
-              "x": "810",
-              "y": "5",
-              "color1": "#FFB90F",
-              "color2": "#FF0000",
-              "style": {
-                  "fill": "#FFFFFF"
-              }
+            "id": "1022759",
+            "label": "1009699",
+            "size": "80",
+            "degree": "360",
+            "type": "demi-node",
+            "x": "810",
+            "y": "5",
+            "color1": "#FFB90F",
+            "color2": "#FF0000",
+            "style": {
+              "fill": "#FFFFFF"
+            }
           }
-      ]
+        ]
       }
 
 
@@ -270,41 +270,30 @@ export default class App extends Component {
 
   //publish message
   publishmsgNode = () => {
-    console.log("app publish", this.state.nodeid)
+    // console.log("app publish", this.state.nodeid)
     PubSub.publish('NODE', this.state.nodeid);
   }
   publishmsgEdge = () => {
-    console.log("app publish", this.state.edgeid)
+    //  console.log("app publish", this.state.edgeid)
     PubSub.publish('EDGE', this.state.edgeid);
   }
   publishmsgComboData = (dataselected) => {
-    console.log("app publish")
+    //  console.log("app publish")
     PubSub.publish('COMBODATA', dataselected);
   }
   publishmsgPathData = (pathdata) => {
-    console.log("app publish")
+    //console.log("app publish")
     PubSub.publish('PATHDATA', pathdata);
   }
 
   publishmsgPathDataToHeader = (pathdata) => {
-    console.log("app publish")
+    //  console.log("app publish")
     PubSub.publish('PATHDATAHEADER', pathdata);
   }
 
-  // callAPI() {
-  //   fetch("http://localhost:9000/testAPI")
-  //     .then(res => res.text())
-  //     .then(res => this.setState({ apiResponse: res }));
-  //     console.log('api');
-  // }
-  /*   callAPI() {
-      fetch("http://localhost:9000/testAPI")
-        .then(res => res.text())
-        .then(res => { console.log(res); });
-  
-    } */
   handleUndo = (e) => {
     e.preventDefault();
+    // console.log("undo", this.undo)
     this.saveRedo();
     //this.redo.unshift(this.state);
     this.setState({
@@ -315,11 +304,18 @@ export default class App extends Component {
       nodeid: this.undo[0].nodeid,
       edgeid: this.undo[0].edgeid,
       pathDate: this.undo[0].pathDate,
+      indexEtat: this.undo[0].indexEtat,
+      record: this.undo[0].record,
+      labelHistory: this.undo[0].labelHistory,
+      changesInfo: this.undo[0].changesInfo,
+      historyData: this.undo[0].historyData,
+
     }, () => {
       this.future.unshift(this.current); //0 current
       (this.previous[1] === "node") ? this.publishmsgNode() : this.publishmsgEdge();
       this.current = this.previous[1]
       this.previous.splice(1, 1);
+      //  console.log("statettete",this.state.comboData)
     }
     );
 
@@ -337,6 +333,11 @@ export default class App extends Component {
       nodeid: this.redo[0].nodeid,
       edgeid: this.redo[0].edgeid,
       pathDate: this.redo[0].pathDate,
+      indexEtat: this.undo[0].indexEtat,
+      record: this.undo[0].record,
+      labelHistory: this.undo[0].labelHistory,
+      changesInfo: this.undo[0].changesInfo,
+      historyData: this.undo[0].historyData,
     }, () => {
       this.previous.splice(1, 0, this.current);
 
@@ -353,7 +354,7 @@ export default class App extends Component {
   componentDidMount() {
     this.activeBtn();
     PubSub.subscribe('DATE', (_, stateObj) => {
-      console.log("date", stateObj);
+      //  console.log("date", stateObj);
       // axios.get(`http://localhost:8080/kaggle/time/` + this.state.clickLabel + `/time_get?st=` + stateObj[0] + `&et= ` + stateObj[1])
       //   .then(res => {
       //     console.log("DATE", `http://localhost:8080/kaggle/time/` + this.state.clickLabel + `/time_get?st=` + stateObj[0] + `&et=` + stateObj[1])
@@ -364,7 +365,11 @@ export default class App extends Component {
       axios.post(`http://localhost:8080/kaggle/time/subgraph/validtime?st=` + stateObj[0] + `&et= ` + stateObj[1], this.state.pathDate)
         .then(res => {
           console.log("DATE", `http://localhost:8080/kaggle/time/subgraph/validtime?st=` + stateObj[0] + `&et= ` + stateObj[1])
+
+          this.updateCombo = true;
+          this.comboRecord = res.data;
           this.setState({ comboData: res.data });
+
           this.setPrompt();
 
         });
@@ -389,7 +394,9 @@ export default class App extends Component {
       if (stateObj[0] === 'false') {
         axios.get(`http://localhost:8080/kaggle/` + stateObj[1].toLowerCase() + `/` + stateObj[2])
           .then(res => {
+            this.updateCombo = true;
             this.setState({ comboData: res.data });
+            this.comboRecord = res.data;
             this.setPrompt();
 
           });
@@ -397,15 +404,20 @@ export default class App extends Component {
       else if (stateObj[0] === 'true') {
         axios.get(`http://localhost:8080/kaggle/edge/` + stateObj[5].toLowerCase() + `/` + stateObj[1].toLowerCase() + '/' + stateObj[3] + '/' + stateObj[2].toLowerCase() + '/' + stateObj[4])
           .then(res => {
+            this.updateCombo = true;
             this.setState({ comboData: res.data });
+            this.comboRecord = res.data;
             this.setPrompt();
             //this.comboDataVir.cloneDeep(this.state.comboData)
           });
       }
     });
     PubSub.subscribe('AFTERFILTRE', (_, stateObj) => {
-      console.log("AFTERFILTRE", stateObj);
+      //  console.log("AFTERFILTRE", stateObj);
+      this.updateCombo = true;
       this.setState({ comboData: stateObj })
+      this.comboRecord = stateObj;
+      this.setPrompt()
     });
 
 
@@ -413,149 +425,149 @@ export default class App extends Component {
     // this.callAPI();
 
     //plugins of graph
-    const tooltipForce = new G6.Tooltip({
-      offsetX: 10,
-      offsetY: 10,
-      // the types of items that allow the tooltip show up
-      itemTypes: ['node', 'edge'],
-      // custom the tooltip's content
-      getContent: (e) => {
-        const outDiv = document.createElement('div');
-        outDiv.style.width = 'fit-content';
-        //outDiv.style.padding = '0px 0px 20px 0px';
+    // const tooltipForce = new G6.Tooltip({
+    //   offsetX: 10,
+    //   offsetY: 10,
+    //   // the types of items that allow the tooltip show up
+    //   itemTypes: ['node', 'edge'],
+    //   // custom the tooltip's content
+    //   getContent: (e) => {
+    //     const outDiv = document.createElement('div');
+    //     outDiv.style.width = 'fit-content';
+    //     //outDiv.style.padding = '0px 0px 20px 0px';
 
-        outDiv.innerHTML = `
-        <h4>Info</h4>
-        <ul>
-          <li>Type: ${e.item.getType()}</li>
-        </ul>
-        <ul>
-          <li>Label: ${e.item.getModel().label}</li>
-        </ul>`;
-        return outDiv;
-      },
-    });
-    const tooltipCombo = new G6.Tooltip({
-      offsetX: 10,
-      offsetY: 10,
+    //     outDiv.innerHTML = `
+    //     <h4>Info</h4>
+    //     <ul>
+    //       <li>Type: ${e.item.getType()}</li>
+    //     </ul>
+    //     <ul>
+    //       <li>Label: ${e.item.getModel().label}</li>
+    //     </ul>`;
+    //     return outDiv;
+    //   },
+    // });
+    // const tooltipCombo = new G6.Tooltip({
+    //   offsetX: 10,
+    //   offsetY: 10,
 
-      // the types of items that allow the tooltip show up
-      itemTypes: ['combo'],
-      // custom the tooltip's content
-      getContent: (e) => {
-        const outDiv = document.createElement('div');
-        outDiv.style.width = 'fit-content';
-        //outDiv.style.padding = '0px 0px 20px 0px';
-        outDiv.innerHTML = `
-        <h4>Info</h4>
-        <ul>
-        <li>Id: ${e.item.getModel().id}</li>
-      </ul>
-        <ul>
-          <li>Type: ${e.item.getType()}</li>
-        </ul>
-        <ul>
-          <li>Label: ${e.item.getModel().label}</li>
-        </ul>`;
-        return outDiv;
-      },
-    });
-    const tooltipNode = new G6.Tooltip({
-      offsetX: 10,
-      offsetY: 10,
+    //   // the types of items that allow the tooltip show up
+    //   itemTypes: ['combo'],
+    //   // custom the tooltip's content
+    //   getContent: (e) => {
+    //     const outDiv = document.createElement('div');
+    //     outDiv.style.width = 'fit-content';
+    //     //outDiv.style.padding = '0px 0px 20px 0px';
+    //     outDiv.innerHTML = `
+    //     <h4>Info</h4>
+    //     <ul>
+    //     <li>Id: ${e.item.getModel().id}</li>
+    //   </ul>
+    //     <ul>
+    //       <li>Type: ${e.item.getType()}</li>
+    //     </ul>
+    //     <ul>
+    //       <li>Label: ${e.item.getModel().label}</li>
+    //     </ul>`;
+    //     return outDiv;
+    //   },
+    // });
+    // const tooltipNode = new G6.Tooltip({
+    //   offsetX: 10,
+    //   offsetY: 10,
 
-      // the types of items that allow the tooltip show up
-      itemTypes: ['node'],
-      // custom the tooltip's content
-      getContent: (e) => {
-        const outDiv = document.createElement('div');
-        outDiv.style.width = 'fit-content';
-        //outDiv.style.padding = '0px 0px 20px 0px';
-        var attributesList = "";
-        Object.keys(e.item.getModel().attributes).forEach(key => {
-          if (key !== "startvalidtime" & key !== "endvalidtime") {
-            attributesList = attributesList + "<ul><li>" + key + ":" + e.item.getModel().attributes[key] + "</li></ul>";
-          }
-          return attributesList;
-        })
+    //   // the types of items that allow the tooltip show up
+    //   itemTypes: ['node'],
+    //   // custom the tooltip's content
+    //   getContent: (e) => {
+    //     const outDiv = document.createElement('div');
+    //     outDiv.style.width = 'fit-content';
+    //     //outDiv.style.padding = '0px 0px 20px 0px';
+    //     var attributesList = "";
+    //     Object.keys(e.item.getModel().attributes).forEach(key => {
+    //       if (key !== "startvalidtime" & key !== "endvalidtime") {
+    //         attributesList = attributesList + "<ul><li>" + key + ":" + e.item.getModel().attributes[key] + "</li></ul>";
+    //       }
+    //       return attributesList;
+    //     })
 
-        outDiv.innerHTML = `
-        <h4>Info</h4>
-        <ul>
-        <li>Id: ${e.item.getModel().id}</li>
-      </ul>
-        <ul>
-          <li>InstanceId: ${e.item.getModel().instanceid}</li>
-        </ul>
-        <ul>
-        <li>EntityId: ${e.item.getModel().comboId}</li>
-      </ul>
-        <ul>
-        <li>Startvalidtime: ${e.item.getModel().startvalidtime}</li>
-      </ul>
-      <ul>
-      <li>Endvalidtime: ${e.item.getModel().endvalidtime}</li>
-    </ul>
-      `+ attributesList;
-        return outDiv;
-      },
-    });
-    const tooltipEdge = new G6.Tooltip({
-      offsetX: 10,
-      offsetY: 10,
+    //     outDiv.innerHTML = `
+    //     <h4>Info</h4>
+    //     <ul>
+    //     <li>Id: ${e.item.getModel().id}</li>
+    //   </ul>
+    //     <ul>
+    //       <li>InstanceId: ${e.item.getModel().instanceid}</li>
+    //     </ul>
+    //     <ul>
+    //     <li>EntityId: ${e.item.getModel().comboId}</li>
+    //   </ul>
+    //     <ul>
+    //     <li>Startvalidtime: ${e.item.getModel().startvalidtime}</li>
+    //   </ul>
+    //   <ul>
+    //   <li>Endvalidtime: ${e.item.getModel().endvalidtime}</li>
+    // </ul>
+    //   `+ attributesList;
+    //     return outDiv;
+    //   },
+    // });
+    // const tooltipEdge = new G6.Tooltip({
+    //   offsetX: 10,
+    //   offsetY: 10,
 
-      // the types of items that allow the tooltip show up
-      itemTypes: ['edge'],
-      // custom the tooltip's content
-      getContent: (e) => {
-        const outDiv = document.createElement('div');
+    //   // the types of items that allow the tooltip show up
+    //   itemTypes: ['edge'],
+    //   // custom the tooltip's content
+    //   getContent: (e) => {
+    //     const outDiv = document.createElement('div');
 
-        outDiv.style.width = 'fit-content';
-        //outDiv.style.padding = '0px 0px 20px 0px';
-        var attributesList = "";
-        Object.keys(e.item.getModel().attributes).forEach(key => {
-          if (key !== "startvalidtime" & key !== "endvalidtime") {
-            attributesList = attributesList + "<ul><li>" + key + ":" + e.item.getModel().attributes[key] + "</li></ul>";
-          }
-          return attributesList;
-        })
+    //     outDiv.style.width = 'fit-content';
+    //     //outDiv.style.padding = '0px 0px 20px 0px';
+    //     var attributesList = "";
+    //     Object.keys(e.item.getModel().attributes).forEach(key => {
+    //       if (key !== "startvalidtime" & key !== "endvalidtime") {
+    //         attributesList = attributesList + "<ul><li>" + key + ":" + e.item.getModel().attributes[key] + "</li></ul>";
+    //       }
+    //       return attributesList;
+    //     })
 
-        outDiv.innerHTML = `
-        <h4>Info</h4>
-        <ul>
-        <li>Id: ${e.item.getModel().id}</li>
-      </ul>
-      <ul>
-      <li>Type: ${e.item.getModel().typeEdge}</li>
-    </ul>
-        <ul>
-          <li>SourceId: ${e.item.getModel().source}</li>
-        </ul>
-        <ul>
-        <li>TargetId: ${e.item.getModel().target}</li>
-      </ul>
+    //     outDiv.innerHTML = `
+    //     <h4>Info</h4>
+    //     <ul>
+    //     <li>Id: ${e.item.getModel().id}</li>
+    //   </ul>
+    //   <ul>
+    //   <li>Type: ${e.item.getModel().typeEdge}</li>
+    // </ul>
+    //     <ul>
+    //       <li>SourceId: ${e.item.getModel().source}</li>
+    //     </ul>
+    //     <ul>
+    //     <li>TargetId: ${e.item.getModel().target}</li>
+    //   </ul>
 
-        <ul>
-        <li>Startvalidtime: ${e.item.getModel().attributes.startvalidtime}</li>
-      </ul>
-      <ul>
-      <li>Endvalidtime: ${e.item.getModel().attributes.endvalidtime}</li>
-    </ul>
-      `+ attributesList;
-        return outDiv;
-      },
-    });
+    //     <ul>
+    //     <li>Startvalidtime: ${e.item.getModel().attributes.startvalidtime}</li>
+    //   </ul>
+    //   <ul>
+    //   <li>Endvalidtime: ${e.item.getModel().attributes.endvalidtime}</li>
+    // </ul>
+    //   `+ attributesList;
+    //     return outDiv;
+    //   },
+    // });
     const contextMenu = new G6.Menu({
 
       getContent(evt) {
         let header;
         if (evt.target && evt.target.isCanvas && evt.target.isCanvas()) {
-          console.log(evt.target.isCanvas())
+          //     console.log(evt.target.isCanvas())
           header = 'Canvas ContextMenu';
         }
         else if (evt.item) {
           const itemType = evt.item.getType();
-          console.log(evt);
+          //    console.log(evt);
           const { item } = evt;
           if (itemType === 'node' || itemType === 'combo') {
             header = `${item._cfg.model.label}`;
@@ -568,7 +580,8 @@ export default class App extends Component {
       <h3 class="serif" >${header}</h3>
       <HR align=center width=100 color=#EEE9E9 SIZE=1>
       <div align="left"><button class=" btnInMenu" >Delete</button></div>
-      <div align="left"><button class=" btnInMenu" >History</button></div>`;
+      <div align="left"><button class=" btnInMenu" >History</button></div>
+      <div align="left"><button class=" btnInMenu" >Expand</button></div>`;
       },
 
       handleMenuClick: (target, item) => {
@@ -577,6 +590,30 @@ export default class App extends Component {
           this.handleDelete();
         } else if (target.innerText === "History") {
           this.handleHistory();
+        } else if (target.innerText === "Expand") {
+          var type = item._cfg.type;
+          var id = item._cfg.model.label;
+          console.log("id", id);
+          let nameId;
+          let reg = /[0-9]+/g;
+          let idNoNum = id.replace(reg, "");
+          let label;
+          console.log("idNoNum", idNoNum);
+          if (type === "combo") {
+            label = idNoNum;
+            nameId = idNoNum.toLowerCase() + "id";
+          }
+          else if (type === "node") {
+            if (idNoNum.length === 0) {
+              label = item._cfg.model.comboId.replace(reg, "");
+              nameId = "instanceid"
+            } else {
+              label = idNoNum;
+              nameId = idNoNum.toLowerCase() + "id";
+            }
+          }
+          var idTarget = id.replace(/[^0-9]/ig, "");
+          this.handleExpand(idTarget, label, nameId);
         }
       },
       // offsetX and offsetY include the padding of the parent container
@@ -588,9 +625,9 @@ export default class App extends Component {
       // 在哪些类型的元素上响应
       itemTypes: ['combo', 'node', 'edge'], //, 'canvas'
     });
-    const minimap = new G6.Minimap({
-      size: [150, 100],
-    });
+    // const minimap = new G6.Minimap({
+    //   size: [150, 100],
+    // });
 
     //path graph
     this.pathGraph = new G6.Graph({
@@ -711,7 +748,7 @@ export default class App extends Component {
       this.refreshDragedNodePosition(e);
     });
     this.forceGraph.on('node:mouseup', (evt) => {
-      console.log("node mouseup")
+      //   console.log("node mouseup")
       this.saveUndo();
       this.previous.unshift('node');
       this.current = "node";
@@ -731,6 +768,7 @@ export default class App extends Component {
       var nodescopy = cloneDeep(this.state.pathDate.nodes);
       // nodescopy.splice(nodescopy.length-1,1);
       if (this.state.clickId === '01') {
+        this.labelSelected = "user";
         this.nodeClickedPath.push('user');
         this.setState({ isNode: true, clickLabel: "user" },
           () => {
@@ -762,6 +800,7 @@ export default class App extends Component {
         //user
       }
       else if (this.state.clickId === '02') {
+        this.labelSelected = "item";
         //item
         this.nodeClickedPath.push('item');
         this.setState({ isNode: true, clickLabel: "item" },
@@ -791,6 +830,7 @@ export default class App extends Component {
           });
       }
       else if (this.state.clickId === '03') {
+        this.labelSelected = "category";
         //category
         this.nodeClickedPath.push('category');
         this.setState({ isNode: true, clickLabel: "category" },
@@ -822,7 +862,9 @@ export default class App extends Component {
 
       axios.get(`http://localhost:8080/kaggle/combo/` + this.state.clickLabel)
         .then(res => {
+          this.updateCombo = true;
           this.setState({ comboData: res.data });
+          this.comboRecord = res.data;
           this.setPrompt();
         })
       axios.get(`http://localhost:8080/kaggle/node/` + this.state.clickLabel + '/1')
@@ -835,6 +877,7 @@ export default class App extends Component {
 
     this.forceGraph.on('edge:mouseup', (evt) => {
       this.saveUndo();
+      //    console.log("undo", this.undo)
       this.previous.unshift('edge');
       this.current = "edge";
       const { item } = evt;
@@ -854,14 +897,13 @@ export default class App extends Component {
       var sourcelabel = "user";
       var targetlabel = "item";
       var edgescopy = cloneDeep(this.state.pathDate.edges);
+      this.labelSelected = label;
       this.setState({ isNode: false, clickLabel: label });
-
+      let addEdge=true;
       if (this.state.clickLabel === 'view') {
         //view
         sourcelabel = "user";
         targetlabel = "item";
-
-
       }
       else if (this.state.clickLabel === 'addtocart') {
         //addtocart
@@ -877,187 +919,209 @@ export default class App extends Component {
         //belongto
         sourcelabel = "item";
         targetlabel = "category";
-        var nodescopy = cloneDeep(this.state.pathDate.nodes);
-        //modify the label of the node
-        nodescopy[nodescopy.length - 1].labelForCard = nodescopy[nodescopy.length - 1].labelForCard + "\n(--belongto)"
-        if (this.state.pathDate.nodes[this.state.pathDate.nodes.length - 1].label.substring(0, 8) === "category") {
-          // check the nb item in nodes
-          let nb = 1
-          if (typeof (this.statisticalFieldNumber(this.nodeClickedPath).item) !== "undefined") {
-            nb = this.statisticalFieldNumber(this.nodeClickedPath).item + 1;
-          }
-          //创建一个Item
-          let objNode = {
-            // id: (nodescopy.length).toString(), label: "item"+nb, x: 15 + (nodescopy.length) * 95, y: 55,
-            id: "item" + (nodescopy.length).toString(), label: "item", labelForCard: "item", labelForQuery: "item" + nb, x: 15 + (nodescopy.length) * 120, y: 55,
-            style: {
-              fill: "#006699",
-              stroke: "#1C1C1C"
+        if (this.state.pathDate.nodes.length !== 0) {
+          var nodescopy = cloneDeep(this.state.pathDate.nodes);
+          //modify the label of the node
+          nodescopy[nodescopy.length - 1].labelForCard = nodescopy[nodescopy.length - 1].labelForCard + "\n(--belongto)"
+          if (this.state.pathDate.nodes[this.state.pathDate.nodes.length - 1].label.substring(0, 8) === "category") {
+            // check the nb item in nodes
+            let nb = 1
+            if (typeof (this.statisticalFieldNumber(this.nodeClickedPath).item) !== "undefined") {
+              nb = this.statisticalFieldNumber(this.nodeClickedPath).item + 1;
             }
-          };
-          nodescopy.push(objNode);
-          this.nodeClickedPath.push("item")
-          let data = Object.assign({}, this.state.pathDate, { nodes: nodescopy });
-          this.setState({
-            pathDate: data
-          });
-        }
-
-        else if (this.state.pathDate.nodes[this.state.pathDate.nodes.length - 1].label.substring(0, 4) === "item") {
-          //创建一个category
-          // check the nb item in nodes
-          let nb = 1
-          if (typeof (this.statisticalFieldNumber(this.nodeClickedPath).category) !== "undefined") {
-            nb = this.statisticalFieldNumber(this.nodeClickedPath).category + 1;
+            //创建一个Item
+            let objNode = {
+              // id: (nodescopy.length).toString(), label: "item"+nb, x: 15 + (nodescopy.length) * 95, y: 55,
+              id: "item" + (nodescopy.length).toString(), label: "item", labelForCard: "item", labelForQuery: "item" + nb, x: 15 + (nodescopy.length) * 120, y: 55,
+              style: {
+                fill: "#006699",
+                stroke: "#1C1C1C"
+              }
+            };
+            nodescopy.push(objNode);
+            this.nodeClickedPath.push("item")
+            let data = Object.assign({}, this.state.pathDate, { nodes: nodescopy });
+            this.setState({
+              pathDate: data
+            });
           }
 
-          //category
-
-          let objNode = {
-            //id: (nodescopy.length).toString(), label: "category"+nb, x: 15 + (nodescopy.length) * 95, y: 55,
-            id: "category" + (nodescopy.length).toString(), label: "category", labelForCard: "category", labelForQuery: "category" + nb, x: 15 + (nodescopy.length) * 120, y: 55,
-            style: {
-              fill: "#FFFF00",
-              stroke: "#1C1C1C"
+          else if (this.state.pathDate.nodes[this.state.pathDate.nodes.length - 1].label.substring(0, 4) === "item") {
+            //创建一个category
+            // check the nb item in nodes
+            let nb = 1
+            if (typeof (this.statisticalFieldNumber(this.nodeClickedPath).category) !== "undefined") {
+              nb = this.statisticalFieldNumber(this.nodeClickedPath).category + 1;
             }
-          }; nodescopy.push(objNode);
-          this.nodeClickedPath.push('category')
-          let data = Object.assign({}, this.state.pathDate, { nodes: nodescopy });
 
-          this.setState({
-            pathDate: data
-          });
+            //category
 
+            let objNode = {
+              //id: (nodescopy.length).toString(), label: "category"+nb, x: 15 + (nodescopy.length) * 95, y: 55,
+              id: "category" + (nodescopy.length).toString(), label: "category", labelForCard: "category", labelForQuery: "category" + nb, x: 15 + (nodescopy.length) * 120, y: 55,
+              style: {
+                fill: "#FFFF00",
+                stroke: "#1C1C1C"
+              }
+            }; nodescopy.push(objNode);
+            this.nodeClickedPath.push('category')
+            let data = Object.assign({}, this.state.pathDate, { nodes: nodescopy });
+
+            this.setState({
+              pathDate: data
+            });
+
+          }
+          else{
+            addEdge=false;
+            alert("click error");
+            
+          }
         }
       }
       else if (this.state.clickLabel === 'subCategory') {
         //subCategory
         sourcelabel = "category";
         targetlabel = "category";
-        var nodescopy = cloneDeep(this.state.pathDate.nodes);
-        //modify the label of the node
-        nodescopy[nodescopy.length - 1].labelForCard = nodescopy[nodescopy.length - 1].labelForCard + "\n(--subCategory)"
-        if (this.state.pathDate.nodes[this.state.pathDate.nodes.length - 1].label.substring(0, 8) === "category") {
-          //创建一个category
+        if (this.state.pathDate.nodes.length !== 0) {
 
-
-          // check the nb category in nodes
-          let nb = 1
-          if (typeof (this.statisticalFieldNumber(this.nodeClickedPath).category) !== "undefined") {
-            nb = this.statisticalFieldNumber(this.nodeClickedPath).category + 1;
-          }
-          //category
-          let objNode = {
-            // id: (nodescopy.length).toString(), label: "category" + nb, x: 15 + (nodescopy.length) * 95, y: 55,
-            id: "category" + (nodescopy.length).toString(), label: "category", labelForCard: "category", labelForQuery: "category" + nb, x: 15 + (nodescopy.length) * 120, y: 55,
-
-            style: {
-              fill: "#FFFF00",
-              stroke: "#1C1C1C"
+          var nodescopy = cloneDeep(this.state.pathDate.nodes);
+          //modify the label of the node
+          nodescopy[nodescopy.length - 1].labelForCard = nodescopy[nodescopy.length - 1].labelForCard + "\n(--subCategory)"
+          if (this.state.pathDate.nodes[this.state.pathDate.nodes.length - 1].label.substring(0, 8) === "category") {
+            //创建一个category
+            // check the nb category in nodes
+            let nb = 1
+            if (typeof (this.statisticalFieldNumber(this.nodeClickedPath).category) !== "undefined") {
+              nb = this.statisticalFieldNumber(this.nodeClickedPath).category + 1;
             }
-          }; nodescopy.push(objNode);
-          this.nodeClickedPath.push('category')
-          let data = Object.assign({}, this.state.pathDate, { nodes: nodescopy });
+            //category
+            let objNode = {
+              // id: (nodescopy.length).toString(), label: "category" + nb, x: 15 + (nodescopy.length) * 95, y: 55,
+              id: "category" + (nodescopy.length).toString(), label: "category", labelForCard: "category", labelForQuery: "category" + nb, x: 15 + (nodescopy.length) * 120, y: 55,
+              style: {
+                fill: "#FFFF00",
+                stroke: "#1C1C1C"
+              }
+            }; nodescopy.push(objNode);
+            this.nodeClickedPath.push('category')
+            let data = Object.assign({}, this.state.pathDate, { nodes: nodescopy });
 
-          this.setState({
-            pathDate: data
-          });
-        };
+            this.setState({
+              pathDate: data
+            });
+          }else{
+            addEdge=false;
+            alert("click error")
+          };
+         
+    
+        }
+
       }
 
 
       if (this.state.clickLabel === "view" | this.state.clickLabel === 'addtocart' | this.state.clickLabel === 'transaction') {
-        console.log("eeeeee")
+        //   console.log("eeeeee")
+        if (this.state.pathDate.nodes.length !== 0) {
+          var nodescopy = cloneDeep(this.state.pathDate.nodes);
+          //modify the label of the node
+          nodescopy[nodescopy.length - 1].labelForCard = nodescopy[nodescopy.length - 1].labelForCard + "\n(--" + this.state.clickLabel + ")"
+          if (this.state.pathDate.nodes[this.state.pathDate.nodes.length - 1].label.substring(0, 4) === "user") {
+            //创建一个Item
 
-        var nodescopy = cloneDeep(this.state.pathDate.nodes);
-        //modify the label of the node
-        nodescopy[nodescopy.length - 1].labelForCard = nodescopy[nodescopy.length - 1].labelForCard + "\n(--" + this.state.clickLabel + ")"
-        if (this.state.pathDate.nodes[this.state.pathDate.nodes.length - 1].label.substring(0, 4) === "user") {
-          //创建一个Item
-
-          // check the nb item in nodes
-          let nb = 1
-          if (typeof (this.statisticalFieldNumber(this.nodeClickedPath).item) !== "undefined") {
-            nb = this.statisticalFieldNumber(this.nodeClickedPath).item + 1;
-          }
-
-          //item
-
-          let objNode = {
-            // id: (nodescopy.length).toString(), label: "item" + nb, x: 15 + (nodescopy.length) * 95, y: 55,
-            id: "item" + (nodescopy.length).toString(), label: "item", labelForCard: "item", labelForQuery: "item" + nb, x: 15 + (nodescopy.length) * 120, y: 55,
-
-            style: {
-              fill: "#006699",
-              stroke: "#1C1C1C"
+            // check the nb item in nodes
+            let nb = 1
+            if (typeof (this.statisticalFieldNumber(this.nodeClickedPath).item) !== "undefined") {
+              nb = this.statisticalFieldNumber(this.nodeClickedPath).item + 1;
             }
-          };
-          nodescopy.push(objNode);
-          this.nodeClickedPath.push('item');
-          let data = Object.assign({}, this.state.pathDate, { nodes: nodescopy });
-          this.setState({
-            pathDate: data
-          });
 
-        }
-        else if (this.state.pathDate.nodes[this.state.pathDate.nodes.length - 1].label.substring(0, 4) === "item") {
-          //创建一个user
+            //item
 
-          // check the nb user in nodes
-          let nb = 1
-          if (typeof (this.statisticalFieldNumber(this.nodeClickedPath).user) !== "undefined") {
-            nb = this.statisticalFieldNumber(this.nodeClickedPath).user + 1;
+            let objNode = {
+              // id: (nodescopy.length).toString(), label: "item" + nb, x: 15 + (nodescopy.length) * 95, y: 55,
+              id: "item" + (nodescopy.length).toString(), label: "item", labelForCard: "item", labelForQuery: "item" + nb, x: 15 + (nodescopy.length) * 120, y: 55,
+
+              style: {
+                fill: "#006699",
+                stroke: "#1C1C1C"
+              }
+            };
+            nodescopy.push(objNode);
+            this.nodeClickedPath.push('item');
+            let data = Object.assign({}, this.state.pathDate, { nodes: nodescopy });
+            this.setState({
+              pathDate: data
+            });
+
           }
+          else if (this.state.pathDate.nodes[this.state.pathDate.nodes.length - 1].label.substring(0, 4) === "item") {
+            //创建一个user
 
-          let objNode = {
-            // id: (nodescopy.length).toString(), label: "user" + nb, x: 15 + (nodescopy.length) * 95, y: 55,
-            id: "user" + (nodescopy.length).toString(), label: "user", labelForCard: "user", labelForQuery: "user" + nb, x: 15 + (nodescopy.length) * 120, y: 55,
-
-            style: {
-              fill: "#FF6666",
-              stroke: "#1C1C1C"
+            // check the nb user in nodes
+            let nb = 1
+            if (typeof (this.statisticalFieldNumber(this.nodeClickedPath).user) !== "undefined") {
+              nb = this.statisticalFieldNumber(this.nodeClickedPath).user + 1;
             }
-          };
-          nodescopy.push(objNode);
-          this.nodeClickedPath.push("user");
-          let data = Object.assign({}, this.state.pathDate, { nodes: nodescopy });
 
-          this.setState({
-            pathDate: data
-          });
+            let objNode = {
+              // id: (nodescopy.length).toString(), label: "user" + nb, x: 15 + (nodescopy.length) * 95, y: 55,
+              id: "user" + (nodescopy.length).toString(), label: "user", labelForCard: "user", labelForQuery: "user" + nb, x: 15 + (nodescopy.length) * 120, y: 55,
+
+              style: {
+                fill: "#FF6666",
+                stroke: "#1C1C1C"
+              }
+            };
+            nodescopy.push(objNode);
+            this.nodeClickedPath.push("user");
+            let data = Object.assign({}, this.state.pathDate, { nodes: nodescopy });
+
+            this.setState({
+              pathDate: data
+            });
+          }
+          else{
+            addEdge=false;
+            alert("click error");
+          }
         }
+
       }
+      if (this.state.pathDate.nodes.length !== 0 & addEdge==true) {
+        let objEdge = {
+          source: this.state.pathDate.nodes[this.state.pathDate.nodes.length - 2].id,
+          target: this.state.pathDate.nodes[this.state.pathDate.nodes.length - 1].id,
+          label: this.state.clickLabel,
+          style: {
+            stroke: "#1C1C1C"
+          }
+        };
+        edgescopy.push(objEdge);
+        // merge
+        let data = Object.assign({}, this.state.pathDate, { edges: edgescopy });
 
-      let objEdge = {
-        source: this.state.pathDate.nodes[this.state.pathDate.nodes.length - 2].id,
-        target: this.state.pathDate.nodes[this.state.pathDate.nodes.length - 1].id,
-        label: this.state.clickLabel,
-        style: {
-          stroke: "#1C1C1C"
-        }
-      };
-      edgescopy.push(objEdge);
-      // merge
-      let data = Object.assign({}, this.state.pathDate, { edges: edgescopy });
+        this.setState({
+          pathDate: data
+        });
 
-      this.setState({
-        pathDate: data
-      });
-
-
+      }
       axios.get(`http://localhost:8080/kaggle/combo/` + this.state.clickLabel + `/` + sourcelabel + `/` + targetlabel)
         .then(res => {
+          this.updateCombo = true;
+          this.comboRecord = res.data;
           this.setState({ comboData: res.data });
           this.setPrompt();
         })
       axios.get(`http://localhost:8080/kaggle/edge/` + this.state.clickLabel + '/1')
         .then(res => {
-          this.setState({ edgeid: res.data }, () => { this.publishmsgEdge(); });
+          console.log("resr data",res.data);
+          this.setState({ edgeid: res.data }, () => {console.log("edgeiddddd",this.state.edgeid.source);this.publishmsgEdge();  }); //
         })
     })
 
     this.forceGraph.on('canvas:click', (evt) => {
-      console.log(typeof (contextMenu)) //contextmenu的类型
+
 
       this.forceGraph.getNodes().forEach((item) => {
         this.forceGraph.clearItemStates(item);
@@ -1074,7 +1138,7 @@ export default class App extends Component {
       container: document.getElementById('combo'),
       width,
       height,
-      plugins: [contextMenu], //minimap
+      plugins: [contextMenu], //minimap,
       fitView: true,
       layout: {
         type: 'comboForce',
@@ -1122,10 +1186,16 @@ export default class App extends Component {
     this.comboGraph.on('combo:mouseenter', (evt) => {
       const { item } = evt;
       this.comboGraph.setItemState(item, 'active', true);
+      this.idSelected = item._cfg.id;
+      let reg = /[0-9]+/g;
+      this.labelSelected = this.idSelected.replace(reg, "")
+      //  console.log("idSelected", this.idSelected)
     });
 
     this.comboGraph.on('combo:mouseleave', (evt) => {
       const { item } = evt;
+
+      //   console.log("idSelected", this.idSelected);
       this.comboGraph.setItemState(item, 'active', false);
     });
     // obtain the id of combo
@@ -1135,9 +1205,11 @@ export default class App extends Component {
       this.isCombo = true;
       this.isEdge = false;
       this.isNode = false;
-      console.log("item", item._cfg.id)
+      //  console.log("item", item._cfg.id)
       this.idSelected = item._cfg.id;
-      console.log("item", this.idSelected)
+      let reg = /[0-9]+/g;
+      this.labelSelected = this.idSelected.replace(reg, "")
+      //  console.log("item", this.idSelected)
       this.comboGraph.setItemState(item, 'selected', true);
       this.handleDetails();
       //console.log(item._cfg.id)
@@ -1151,18 +1223,20 @@ export default class App extends Component {
       this.isEdge = false;
       this.isNode = true;
       this.idSelected = item._cfg.id;
+      //    console.log("idSelected", this.idSelected);
       this.comboGraph.setItemState(item, 'active', true);
       this.handleDetails();
     });
 
     this.comboGraph.on('node:mouseleave', (evt) => {
       const { item } = evt;
-      console.log(item._cfg.states)
+      //   console.log(item._cfg.states)
       if (item._cfg.states.length !== 2) {
         this.isCombo = false;
         this.isEdge = false;
         this.isNode = false;
         this.idSelected = "";
+        //    console.log("idSelected", this.idSelected);
       }
 
       this.comboGraph.setItemState(item, 'active', false);
@@ -1170,13 +1244,14 @@ export default class App extends Component {
     });/**/
     this.comboGraph.on('node:mousedown', (evt) => {
       const { item } = evt;
-      console.log(item)
+      //   console.log(item)
       this.isCombo = false;
       this.isEdge = false;
       this.isNode = true;
-      console.log("item", item)
+      //     console.log("item", item)
       //this.setState({idSelected:item._cfg.id});    
       this.idSelected = item._cfg.id;
+      //    console.log("idSelected", this.idSelected);
       this.comboGraph.setItemState(item, 'selected', true);
       this.handleDetails();
       // this.publishmsgComboData();     
@@ -1188,8 +1263,10 @@ export default class App extends Component {
       this.isEdge = true;
       this.isNode = false;
       this.idSelected = item._cfg.id;
+      //    console.log("idSelected", this.idSelected);
       this.comboGraph.setItemState(item, 'active', true);
       this.handleDetails();
+
     });
 
     this.comboGraph.on('edge:mouseleave', (evt) => {
@@ -1199,6 +1276,7 @@ export default class App extends Component {
         this.isEdge = false;
         this.isNode = false;
         this.idSelected = "";
+        //    console.log("idSelected", this.idSelected);
       }
       this.comboGraph.setItemState(item, 'active', false);
       this.handleDetails();
@@ -1233,7 +1311,7 @@ export default class App extends Component {
     const lightGreen = "#7FFF00";
     const lightOrange = "#FFB90F";
     const lightRed = "#FF0000";
-    const lightBlue = '#5b8ff9';
+    //const lightBlue = '#5b8ff9';
 
     // register a pie chart node
     G6.registerNode("pie-node", {
@@ -1278,7 +1356,7 @@ export default class App extends Component {
           attrs: {
             path: [
               ["M", inArcEnd1[0], inArcEnd1[1]],
-              ["A", radius, radius, 0, 1, 0, radius,0],
+              ["A", radius, radius, 0, 1, 0, radius, 0],
               ["L", 0, 0],
               ["Z"]
             ],
@@ -1304,14 +1382,14 @@ export default class App extends Component {
           group.addShape("text", {
             // attrs: style
             attrs: {
-             
+
               textAlign: "center",
               textBaseline: "middle",
               text: cfg.label,
               fill: "white",
-              
+
               fontStyle: "bold",
-              
+
             },
             name: "text-shape"
           });
@@ -1366,14 +1444,14 @@ export default class App extends Component {
           group.addShape("text", {
             // attrs: style
             attrs: {
-             
+
               textAlign: "center",
               textBaseline: "middle",
               text: cfg.label,
               fill: "white",
-              
+
               fontStyle: "bold",
-              
+
             },
             name: "text-shape"
           });
@@ -1390,16 +1468,16 @@ export default class App extends Component {
       width: widthH,
       height: heightH,
       plugins: [],
-     // fitView: true,
+      // fitView: true,
       // translate the comboGraph to align the canvas's center, support by v3.5.1
       fitCenter: true,
       modes: {
-         default: ['drag-canvas' ],  //'drag-node', 'drag-combo', 'zoom-canvas'
+        default: ['drag-canvas'],  //'drag-node', 'drag-combo', 'zoom-canvas'
       },
       defaultNode: {
         type: 'circle',
         style: {
-          fill:"#FFFFFF",
+          fill: "#FFFFFF",
           stroke: "#1E90FF",
           lineWidth: 1,
         }
@@ -1418,14 +1496,15 @@ export default class App extends Component {
       this.historyGraph.getEdges().forEach((item) => {
         this.historyGraph.clearItemStates(item);
       });
+      this.updateCombo = false;
       const { item } = evt;
       this.historyGraph.setItemState(item, 'selected', true);
       let idClick = item._cfg.id;
-      let id=0;
-     Object.values(this.state.historyData.nodes).map((value)=>{
-       value.id===idClick? this.setState({indexEtat:id}):console.log(value,value.label,idClick);
-       id=id+1;
-     })
+      let id = 0;
+      Object.values(this.state.historyData.nodes).map((value) => {
+        value.id === idClick ? this.setState({ indexEtat: id }) : console.log(value, value.label, idClick);
+        id = id + 1;
+      })
     });
     this.historyGraph.on('canvas:click', (evt) => {
       this.historyGraph.getNodes().forEach((item) => {
@@ -1442,7 +1521,7 @@ export default class App extends Component {
     this.historyGraph.render();
 
   }
-  
+
 
   statisticalFieldNumber = (arr) => {
     return arr.reduce(function (prev, next) {
@@ -1469,7 +1548,7 @@ export default class App extends Component {
     }
   }
   setPrompt = () => {
-    if (this.state.comboData.nodes.length == 0) {
+    if (this.state.comboData.nodes.length === 0) {
       this.setState({ record: "no record ┗( T﹏T )┛" })
 
     } else {
@@ -1479,24 +1558,32 @@ export default class App extends Component {
   }
 
   componentDidUpdate() {
-    console.log("change data");
-    if (typeof (this.state.comboData.edges) != 'undefined') {
-      // if (typeof(this.comboDataVir.edges)!='undefined'){ 
-      console.log("util process parallel ")
-      G6.Util.processParallelEdges(this.state.comboData.edges);
-    };
-    // G6.Util.processParallelEdges(this.comboDataVir.edges);};
+    console.log("change data", this.updateCombo); 
+    if (this.updateCombo) {
+      if (typeof (this.state.comboData.edges) != 'undefined') {
+        // if (typeof(this.comboDataVir.edges)!='undefined'){ 
+        //    console.log("util process parallel ")
+        G6.Util.processParallelEdges(this.state.comboData.edges);
+      };
+      // G6.Util.processParallelEdges(this.comboDataVir.edges);};
 
-    (this.state.isNode === true) ? this.comboGraph.updateLayout({
-      type: 'comboForce', nodeSpacing: (d) => 8,
-      preventOverlap: true,
-      preventComboOverlap: true,
-    }) : this.comboGraph.updateLayout({
-      type: 'random',
-      preventOverlap: true,
-    })
+      (this.state.isNode === true) ? this.comboGraph.updateLayout({
+        type: 'comboForce', nodeSpacing: (d) => 8,
+        preventOverlap: true,
+        preventComboOverlap: true,
+      }) : this.comboGraph.updateLayout({
+        // type: 'mds',
+        // preventOverlap: true,
+        type: 'radial',
+        unitRadius: 120,
+        preventOverlap: true,
+        maxPreventOverlapIteration: 500,
+      })
 
-    this.comboGraph.changeData(this.state.comboData);
+      console.log("updateCombo", this.updateCombo)
+      this.comboGraph.changeData(this.state.comboData);
+    }
+
     this.historyGraph.changeData(this.state.historyData);
 
     //this.comboGraph.changeData(this.comboDataVir);
@@ -1554,28 +1641,28 @@ export default class App extends Component {
   handleDetails() {
     let deepState = cloneDeep(this.state.comboData)
     if (this.isNode) {
-      const node = this.comboGraph.findById(this.idSelected);
+      //const node = this.comboGraph.findById(this.idSelected);
       let id = this.contains(deepState.nodes, this.idSelected)
 
-      console.log(id, deepState.nodes[id])
+      //console.log(id, deepState.nodes[id])
       this.publishmsgComboData(deepState.nodes[id])
     } else if (this.isCombo) {
       //all the nodes of the selected combo
       const combo = this.comboGraph.findById(this.idSelected);
-      const nodesInCombo = combo.getNodes()
-      console.log(nodesInCombo)
+      // const nodesInCombo = combo.getNodes()
+      //console.log(nodesInCombo)
       let idsInNodes = this.containsComboInNodes(deepState.nodes, this.idSelected);
-      console.log(idsInNodes);
+      // console.log(idsInNodes);
       var total = 0;
       // condition : reponse order by itemid
       idsInNodes.forEach(id => {
         deepState.nodes = deepState.nodes.splice(id - total, 1);
         total++;
       });
-      console.log(idsInNodes, deepState.nodes)
+      // console.log(idsInNodes, deepState.nodes)
       let idCombo = this.contains(deepState.combos, this.idSelected);
       deepState.combos = deepState.combos.splice(idCombo, 1);
-      console.log(idCombo, deepState.combos)
+      // console.log(idCombo, deepState.combos)
       //publish whatttt????
     } else if (this.isEdge) {
       let idEdge = this.contains(deepState.edges, this.idSelected)
@@ -1593,32 +1680,37 @@ export default class App extends Component {
     this.saveUndo();
     let deepState = cloneDeep(this.state.comboData)
 
-    console.log(deepState)
+    // console.log(deepState)
+    console.log("this.idSelected", this.idSelected, this.isNode)
+
     if (this.isNode) {
-      console.log(this.state)
+      //  console.log(this.state)
       const node = this.comboGraph.findById(this.idSelected);
       // 找到对应的边 删除边
       const edges = node.getEdges();
       if (edges.length !== 0) {
         edges.forEach(edge => {
-          console.log(edge);
+          //      console.log(edge);
           let idEdge = this.contains(deepState.edges, edge._cfg.id)
           deepState.edges.splice(idEdge, 1)
         });
       }
       let id = this.contains(deepState.nodes, this.idSelected)
-      console.log(id)
+      // console.log(id)
       deepState.nodes.splice(id, 1)
+      this.updateCombo = true;
+      this.comboRecord = deepState;
       this.setState({ comboData: deepState })
     } else if (this.isCombo) {
       //all the nodes of the selected combo
       const combo = this.comboGraph.findById(this.idSelected);
+
       const nodesInCombo = combo.getNodes()
-      console.log(nodesInCombo)
+      //   console.log(nodesInCombo)
       //找到所有的边 并删除
       let edgesRelevent = [];
       let idsInNodes = this.containsComboInNodes(deepState.nodes, this.idSelected);
-      console.log(idsInNodes);
+      //  console.log(idsInNodes);
       nodesInCombo.forEach(idNode => {
         const node = this.comboGraph.findById(idNode._cfg.id);
         const edges = node.getEdges();
@@ -1627,7 +1719,7 @@ export default class App extends Component {
 
       if (edgesRelevent.length !== 0) {
         edgesRelevent.forEach(edge => {
-          console.log(edge);
+          //    console.log(edge);
           let idEdge = this.contains(deepState.edges, edge._cfg.id)
           deepState.edges.splice(idEdge, 1)
         });
@@ -1640,30 +1732,92 @@ export default class App extends Component {
       });
       let idCombo = this.contains(deepState.combos, this.idSelected);
       deepState.combos.splice(idCombo, 1);
+      this.updateCombo = true;
+      this.comboRecord = deepState;
       this.setState({ comboData: deepState })
     } else if (this.isEdge) {
       let idEdge = this.contains(deepState.edges, this.idSelected)
       deepState.edges.splice(idEdge, 1)
+      this.updateCombo = true;
+      this.comboRecord = deepState;
       this.setState({ comboData: deepState })
     }
   }
 
-  handleHistory(){
-    const nodeId=this.comboGraph.findById(this.idSelected)._cfg.id.replace(/[^0-9]/ig,"");
+  handleHistory() {
+    //  console.log("histttt", this.labelSelected)
+    const nodeId = this.comboGraph.findById(this.idSelected)._cfg.id.replace(/[^0-9]/ig, "");
+    this.updateCombo = false;
+    axios.get(`http://localhost:8080/kaggle/nodehistory/` + this.labelSelected + `/` + nodeId)
+      .then(res => {
+        this.setState({ historyData: res.data["nodes"] });
+        this.setState({ changesInfo: res.data["changes"] });
 
-    axios.get(`http://localhost:8080/kaggle/nodehistory/` + this.state.clickLabel+`/`+nodeId)
-    .then(res => {
-      this.setState({historyData: res.data["nodes"] });
-      this.setState({changesInfo:res.data["changes"]});
-    
-    });
-    this.setState({labelHistory:this.idSelected});
+      });
+    this.setState({ labelHistory: this.idSelected });
+  }
+
+  handleExpand(id, label, nameId) {
+
+    //获取节点Id
+    console.log("expand", id, label, nameId)
+    //叫一个api
+    http://localhost:8080/kaggle/combo/expand/15/item/itemid
+    axios.get(`http://localhost:8080/kaggle/combo/expand/` + id + `/` + label + `/` + nameId)
+      .then(res => {
+        //将值加到comborecord上/或者是state上 可以保留原来的位置   注意删除重复的元素
+        //combo buyongguan
+        //node
+        this.comboRecord=cloneDeep(this.state.comboData);
+        if (res.data.nodes.length !== 0) {
+          res.data.nodes.map((node) => {
+            var result = this.comboRecord.nodes.some(item => item.id === node.idCombo) //have the same id
+            if (!result) {
+              // do something
+              this.comboRecord.nodes.push(node);
+            }
+          })
+
+        }
+        //edge zhijiejia
+        if (res.data.edges.length !== 0) {
+          if (typeof (this.comboRecord.edges) !== "undefined") {
+            res.data.edges.map((edge) => {
+              this.comboRecord.edges.push(edge);
+            })
+
+          } else {
+            var edges = [];
+            //创建一个edges 加到comborecord里
+            res.data.edges.map((edge) => {
+              edges.push(edge);
+            });
+            let key = "edges";
+            this.comboRecord[key] = edges;
+          }
+        }
+
+        console.log("comboRecord", this.comboRecord)
+
+
+        // 设置 state
+        this.updateCombo = true;
+        this.setState({isNode:false})
+        this.setState({ comboData: this.comboRecord });
+        this.setPrompt();
+      });
+
+
+
+
   }
   handleTest = () => {
-    console.log("handle test");
+    //   console.log("handle test");
     axios.post('http://localhost:8080/kaggle/getBody', this.state.pathDate)
       .then(res => {
-        console.log('res=>', res.data);
+        //     console.log('res=>', res.data);
+        this.updateCombo = true;
+        this.comboRecord = res.data;
         this.setState({ comboData: res.data })
         this.setPrompt();
       });
@@ -1675,7 +1829,7 @@ export default class App extends Component {
     this.activeBtn();
     return (
       <div className="App" style={{ position: 'relative' }}>
-        {/* <button onClick={this.force()}></button>*/}<Header record={this.state.record} labelHistory={this.state.labelHistory} changesInfo={this.state.changesInfo} indexEtat={this.state.indexEtat}></Header>
+        {/* <button onClick={this.force()}></button>*/}<Header record={this.state.record} labelHistory={this.state.labelHistory} changesInfo={this.state.changesInfo} indexEtat={this.state.indexEtat} node={this.state.nodeid} edge={this.state.edgeid}></Header>
 
         <UndoButton handlerClick={this.handleUndo} cle={this.cleundo} ></UndoButton>
         <RedoButton handlerClick={this.handleRedo} cle={this.cleredo}></RedoButton>
@@ -1683,7 +1837,7 @@ export default class App extends Component {
         {/* <p className="App-intro">{this.state.apiResponse}</p>
         <button id="undo" onClick={this.handleUndo}>Undo</button>
         <button id="redo" onClick={this.handleRedo}>Redo</button>*/}
-        <button style={{ position: 'fixed', top: '23%', left: '3.5%' }} onClick={this.handleTest} >for test</button>
+        <button style={{ position: 'fixed', top: '23%', left: '3.5%' }} onClick={this.handleTest} >Subgraph</button>
 
         <Footer></Footer>
 
