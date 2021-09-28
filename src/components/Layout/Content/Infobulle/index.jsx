@@ -13,6 +13,7 @@ const useStyles = makeStyles((theme) => ({
         position: 'relative',
         overflow: 'auto',
         maxHeight: 500,
+        
     },
     listSection: {
         backgroundColor: 'inherit',
@@ -22,6 +23,7 @@ const useStyles = makeStyles((theme) => ({
         padding: 0,
     },
 }));
+const colors={"disappear":'#FF0000',"appear":'#7FFF00'};
 
 export default function PinnedSubheaderList(props) {
     const classes = useStyles();
@@ -45,12 +47,12 @@ export default function PinnedSubheaderList(props) {
                     <ul className={classes.ul}>
                         <ListSubheader>{sectionTitle}</ListSubheader>
                         {sectionTitle==="disappear"||sectionTitle==="appear"?Object.keys(list[parseInt(indexSelect)][sectionTitle]).map((key) => (
-                            <ListItem key={`item-${sectionTitle}-${key}`}>
-                                <ListItemText primary={` ${list[parseInt(indexSelect)][sectionTitle][key]} `}/>
+                            <ListItem style={{color:colors[sectionTitle]}} key={`item-${sectionTitle}-${key}`}>
+                                <ListItemText  primary={` ${list[parseInt(indexSelect)][sectionTitle][key]} `}/>
                             </ListItem>
                         )):Object.keys(list[parseInt(indexSelect)][sectionTitle]).map((key) => (
                             <ListItem key={`item-${sectionTitle}-${key}`}>
-                                <ListItemText primary={`${key} ${list[parseInt(indexSelect)][sectionTitle][key]} `}/>
+                                <ListItemText style={{color:"#FFB90F"}}  primary={`${key} ${list[parseInt(indexSelect)][sectionTitle][key]} `}/>
                             </ListItem>
                         ))}
                     </ul>
