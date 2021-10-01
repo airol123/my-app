@@ -10,41 +10,41 @@ import cloneDeep from "lodash/cloneDeep";
 export default class App extends Component {
   constructor(props) {
     super(props);
-    this.undo = [];
-    this.redo = [];
-    this.cleundo = true;
-    this.cleredo = true;
-    this.idSelected = "";
-    this.labelSelected = "";
-    this.isNode = false;
-    this.isCombo = false;
-    this.isEdge = false;
-    this.previous = [];
-    this.future = [];
-    this.current = "";
-    this.comboDataVir = {};
-    this.nodeClickedPath = [];
-    this.updateCombo = true;
-    this.comboRecord = {};
+    this.undo = []; // Record the status to be returned
+    this.redo = []; //Record to be last status
+    this.cleundo = true; // Whether to display the Undo button
+    this.cleredo = true; //Whether to display the Redo button
+    this.idSelected = ""; //id of selected node or edge
+    this.labelSelected = "";//label of selected node or edge
+    this.isNode = false;//whether it is node, the selected node
+    this.isCombo = false;//whether combo
+    this.isEdge = false;//whether edge
+    this.previous = [];//record the node or edge that is selected; corresponding undo
+    this.future = [];//when the user click undo, save the first value (node/edge) of the list previous
+    this.current = "";//the current type (node/edge) of the selected element 
+    this.comboDataVir = {};// unuseful
+    this.nodeClickedPath = [];//record the selected nodes to be showed in the subgraph
+    this.updateCombo = true;//where update combo graph
+    this.comboRecord = {};//record of the state
     //state
     this.state = {
-      indexEtat: "0",
-      clickId: "",
-      isNode: true,
-      clickLabel: "",
-      record: "waiting for work ヾ(￣▽￣)",
-      labelHistory: "____",
+      indexEtat: "0", //the id of clicked state in the history graph
+      clickId: "", //the id of selected node
+      isNode: true, //whether display node in the combo graph (it has influence to the layout of combograph)
+      clickLabel: "",// the label of selected element(node/edge)
+      record: "waiting for work ヾ(￣▽￣)",//signage
+      labelHistory: "____",//title for history graph
       changesInfo: [{ disappear: [], appear: [], valuechange: [], validtime: [] },
-      { disappear: [], appear: [], valuechange: [], validtime: [] }],
+      { disappear: [], appear: [], valuechange: [], validtime: [] }],// record of the changes of an entity
       comboData: {
-      },
-      nodeid: {},
-      edgeid: {}, // date about relation to be transmitted in the list
+      },// data to be rendered in the combo graph
+      nodeid: {},//date about node to be transmitted in the list
+      edgeid: {}, // date about edge to be transmitted in the list
       forceData: {
         nodes: [
           {
             id: '01',
-            x: 50,
+            x: 30,
             y: 120,
             label: 'User',
             style: {
@@ -54,8 +54,8 @@ export default class App extends Component {
           },
           {
             id: '02',
-            x: 400,
-            y: 150,
+            x: 330,
+            y: 120,
             label: 'Item',
             type: 'circle',
             style: {
@@ -65,8 +65,8 @@ export default class App extends Component {
           },
           {
             id: '03',
-            x: 250,
-            y: 100,
+            x: 630,
+            y: 120,
             label: 'Category',
             style: {
               fill: '#FFFF00',
@@ -118,8 +118,8 @@ export default class App extends Component {
         }
         ],
 
-      },
-      pathDate: { nodes: [], edges: [] },
+      },// data to be rendered in the force graph (structure of the graph in the database)
+      pathDate: { nodes: [], edges: [] },// data to be rendered on the path graph
       historyData: {
         "nodes": [
           {
@@ -256,11 +256,10 @@ export default class App extends Component {
             }
           }
         ]
-      }
-
-
-
+      }// data to be rendered on the history graph
     };//{ id: '0', label: 'test', x: 20, y: 55 }
+   
+   //------------------graphs--------------------------
     this.comboGraph = null;
     this.forceGraph = null;
     this.pathGraph = null;
@@ -269,18 +268,22 @@ export default class App extends Component {
   }
 
   //publish message
+  // publish the selected node in the force graph
   publishmsgNode = () => {
     // console.log("app publish", this.state.nodeid)
     PubSub.publish('NODE', this.state.nodeid);
   }
+  // publish the selected edge in the force graph
   publishmsgEdge = () => {
     //  console.log("app publish", this.state.edgeid)
     PubSub.publish('EDGE', this.state.edgeid);
   }
+  // publish the current combo data
   publishmsgComboData = (dataselected) => {
     //  console.log("app publish")
     PubSub.publish('COMBODATA', dataselected);
   }
+  // publish the current path data 
   publishmsgPathData = (pathdata) => {
     //console.log("app publish")
     PubSub.publish('PATHDATA', pathdata);
@@ -362,9 +365,9 @@ export default class App extends Component {
 
       //   });
 
-      axios.post(`http://localhost:8080/kaggle/time/subgraph/validtime?st=` + stateObj[0] + `&et= ` + stateObj[1], this.state.pathDate)
+      axios.post(`http://localhost:8080/kaggle/subgraph/time/validtime?st=` + stateObj[0] + `&et= ` + stateObj[1], this.state.pathDate)
         .then(res => {
-          console.log("DATE", `http://localhost:8080/kaggle/time/subgraph/validtime?st=` + stateObj[0] + `&et= ` + stateObj[1])
+          console.log("DATE", `http://localhost:8080/kaggle/subgraph/time/validtime?st=` + stateObj[0] + `&et= ` + stateObj[1])
 
           this.updateCombo = true;
           this.comboRecord = res.data;
@@ -379,9 +382,9 @@ export default class App extends Component {
     // PubSub.subscribe('DAY', (_, stateObj) => {
     //   console.log("day", stateObj);
 
-    //   axios.post(`http://localhost:8080/kaggle/time/subgraph/validtime?st=` + stateObj[0] + `&et= ` + stateObj[1], this.state.pathDate)
+    //   axios.post(`http://localhost:8080/kaggle/subgraph/time/validtime?st=` + stateObj[0] + `&et= ` + stateObj[1], this.state.pathDate)
     //     .then(res => {
-    //       console.log("day", `http://localhost:8080/kaggle/time/subgraph/validtime?st=` + stateObj[0] + `&et= ` + stateObj[1])
+    //       console.log("day", `http://localhost:8080/kaggle/subgraph/time/validtime?st=` + stateObj[0] + `&et= ` + stateObj[1])
     //       this.setState({ comboData: res.data });
 
 
@@ -392,7 +395,7 @@ export default class App extends Component {
     PubSub.subscribe('ClickList', (_, stateObj) => {
       this.saveUndo();
       if (stateObj[0] === 'false') {
-        axios.get(`http://localhost:8080/kaggle/` + stateObj[1].toLowerCase() + `/` + stateObj[2])
+        axios.get(`http://localhost:8080/kaggle/combo/node/` + stateObj[1].toLowerCase() + `/` + stateObj[2])
           .then(res => {
             this.updateCombo = true;
             this.setState({ comboData: res.data });
@@ -402,7 +405,7 @@ export default class App extends Component {
           });
       }
       else if (stateObj[0] === 'true') {
-        axios.get(`http://localhost:8080/kaggle/edge/` + stateObj[5].toLowerCase() + `/` + stateObj[1].toLowerCase() + '/' + stateObj[3] + '/' + stateObj[2].toLowerCase() + '/' + stateObj[4])
+        axios.get(`http://localhost:8080/kaggle/combo/edge/` + stateObj[5].toLowerCase() + `/` + stateObj[1].toLowerCase() + '/' + stateObj[3] + '/' + stateObj[2].toLowerCase() + '/' + stateObj[4])
           .then(res => {
             this.updateCombo = true;
             this.setState({ comboData: res.data });
@@ -775,7 +778,7 @@ export default class App extends Component {
 
             let objNode = {
               //id: (nodescopy.length).toString(), label: this.state.clickLabel+'1', x: 15 + (nodescopy.length) * 95, y: 55,
-              id: "user" + (nodescopy.length).toString(), label: this.state.clickLabel, labelForCard: this.state.clickLabel, labelForQuery: this.state.clickLabel + '1', x: 15 + (nodescopy.length) * 120, y: 55,
+              id: "user" + (nodescopy.length).toString(), label: this.state.clickLabel, labelForCard: this.state.clickLabel, labelForQuery: this.state.clickLabel + '1', x: 21 + (nodescopy.length) * 120, y: 55,
 
 
               style: {
@@ -808,7 +811,7 @@ export default class App extends Component {
 
             let objNode = {
               //id: (nodescopy.length).toString(), label: this.state.clickLabel+'1', x: 15 + (nodescopy.length) * 95, y: 55,
-              id: "item" + (nodescopy.length).toString(), label: this.state.clickLabel, labelForCard: this.state.clickLabel, labelForQuery: this.state.clickLabel + '1', x: 15 + (nodescopy.length) * 120, y: 55,
+              id: "item" + (nodescopy.length).toString(), label: this.state.clickLabel, labelForCard: this.state.clickLabel, labelForQuery: this.state.clickLabel + '1', x: 21 + (nodescopy.length) * 120, y: 55,
 
               style: {
                 fill: "#006699",
@@ -838,7 +841,7 @@ export default class App extends Component {
 
             let objNode = {
               // id: (nodescopy.length).toString(), label: this.state.clickLabel+'1', x: 15 + (nodescopy.length) * 95, y: 55,
-              id: "category" + (nodescopy.length).toString(), label: this.state.clickLabel, labelForCard: this.state.clickLabel, labelForQuery: this.state.clickLabel + '1', x: 15 + (nodescopy.length) * 120, y: 55,
+              id: "category" + (nodescopy.length).toString(), label: this.state.clickLabel, labelForCard: this.state.clickLabel, labelForQuery: this.state.clickLabel + '1', x: 21 + (nodescopy.length) * 120, y: 55,
 
               style: {
                 fill: "#FFFF00",
@@ -860,14 +863,14 @@ export default class App extends Component {
       }
 
 
-      axios.get(`http://localhost:8080/kaggle/combo/` + this.state.clickLabel)
+      axios.get(`http://localhost:8080/kaggle/combo/node/` + this.state.clickLabel)
         .then(res => {
           this.updateCombo = true;
           this.setState({ comboData: res.data });
           this.comboRecord = res.data;
           this.setPrompt();
         })
-      axios.get(`http://localhost:8080/kaggle/node/` + this.state.clickLabel + '/1')
+      axios.get(`http://localhost:8080/kaggle/list/node/` + this.state.clickLabel + '/1')
         .then(res => {
 
           this.setState({ nodeid: res.data }, () => { this.publishmsgNode(); });
@@ -974,7 +977,7 @@ export default class App extends Component {
           }
           else{
             addEdge=false;
-            alert("click error");
+            alert("Subgraph generation failed");
             
           }
         }
@@ -1012,7 +1015,7 @@ export default class App extends Component {
             });
           }else{
             addEdge=false;
-            alert("click error")
+            alert("Subgraph generation failed")
           };
          
     
@@ -1083,7 +1086,7 @@ export default class App extends Component {
           }
           else{
             addEdge=false;
-            alert("click error");
+            alert("Subgraph generation failed");
           }
         }
 
@@ -1106,14 +1109,14 @@ export default class App extends Component {
         });
 
       }
-      axios.get(`http://localhost:8080/kaggle/combo/` + this.state.clickLabel + `/` + sourcelabel + `/` + targetlabel)
+      axios.get(`http://localhost:8080/kaggle/combo/edge/` + this.state.clickLabel + `/` + sourcelabel + `/` + targetlabel)
         .then(res => {
           this.updateCombo = true;
           this.comboRecord = res.data;
           this.setState({ comboData: res.data });
           this.setPrompt();
         })
-      axios.get(`http://localhost:8080/kaggle/edge/` + this.state.clickLabel + '/1')
+      axios.get(`http://localhost:8080/kaggle/list/edge/` + this.state.clickLabel + '/1')
         .then(res => {
           console.log("resr data",res.data);
           this.setState({ edgeid: res.data }, () => {console.log("edgeiddddd",this.state.edgeid.source);this.publishmsgEdge();  }); //
@@ -1813,7 +1816,7 @@ export default class App extends Component {
   }
   handleTest = () => {
     //   console.log("handle test");
-    axios.post('http://localhost:8080/kaggle/getBody', this.state.pathDate)
+    axios.post('http://localhost:8080/kaggle/subgraph', this.state.pathDate)
       .then(res => {
         //     console.log('res=>', res.data);
         this.updateCombo = true;
@@ -1829,7 +1832,8 @@ export default class App extends Component {
     this.activeBtn();
     return (
       <div className="App" style={{ position: 'relative' }}>
-        {/* <button onClick={this.force()}></button>*/}<Header record={this.state.record} labelHistory={this.state.labelHistory} changesInfo={this.state.changesInfo} indexEtat={this.state.indexEtat} node={this.state.nodeid} edge={this.state.edgeid}></Header>
+        {/* <button onClick={this.force()}></button>*/}
+        <Header record={this.state.record} labelHistory={this.state.labelHistory} changesInfo={this.state.changesInfo} indexEtat={this.state.indexEtat} node={this.state.nodeid} edge={this.state.edgeid}></Header>
 
         <UndoButton handlerClick={this.handleUndo} cle={this.cleundo} ></UndoButton>
         <RedoButton handlerClick={this.handleRedo} cle={this.cleredo}></RedoButton>
