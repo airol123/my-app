@@ -14,7 +14,9 @@ const useStyles = makeStyles((theme) => ({
 
 export default function FabRedo(props) {
   const classes = useStyles();
-  const{handlerClick,cle}=props;
+  const{handlerClick,cle}=props;//handleClick: the function for return the next state;
+  //cle：the signal whether display the button
+
   return (
     <React.Fragment>
       <CssBaseline />

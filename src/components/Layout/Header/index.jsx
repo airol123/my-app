@@ -117,7 +117,7 @@ const {record,labelHistory,changesInfo,indexEtat,node,edge} =props;
     console.log("request",request)
 
 
-    axios.post('http://localhost:8080/kaggle/filtregraph', request)
+    axios.post('http://localhost:8080/kaggle/subgraph/filtregraph', request)
     .then(res => {
       console.log('res=>', res.data);
       // send to app

@@ -13,7 +13,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 export default function FabUndo(props) {
   const classes = useStyles();
-  const{handlerClick,cle}=props;
+  const{handlerClick,cle}=props;//handleClick: the function for return the last state;
+                                //cle：the signal whether display the button
 
   return (
     <React.Fragment>
